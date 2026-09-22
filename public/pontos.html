@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>SIMSEP - Pontos de Monitoramento</title>
+<link rel="icon" type="image/svg+xml" href="img/logo.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <div id="barraLateral" class="sidebar"></div>
+    <div class="conteudo">
+      <div class="cabecalho-pagina">
+        <div>
+          <h1>Pontos de monitoramento</h1>
+          <p class="subtitulo">Locais onde vibração, ruído e qualidade do ar são acompanhados</p>
+        </div>
+      </div>
+
+      <div class="painel">
+        <form id="formPonto">
+          <input type="hidden" id="pontoId">
+          <div class="campo">
+            <label>Nome</label>
+            <input type="text" id="nome" required>
+          </div>
+          <div class="campo">
+            <label>Localização</label>
+            <input type="text" id="localizacao" required>
+          </div>
+          <div class="campo">
+            <label>Descrição</label>
+            <textarea id="descricao"></textarea>
+          </div>
+          <div class="acoes-linha">
+            <button type="submit" id="botaoSalvar">Cadastrar ponto</button>
+            <button type="button" class="secundario" id="botaoCancelar" style="display:none;">Cancelar edição</button>
+          </div>
+          <p class="erro" id="msgErro"></p>
+        </form>
+      </div>
+
+      <div class="painel">
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr><th>Nome</th><th>Localização</th><th>Descrição</th><th></th></tr>
+            </thead>
+            <tbody id="corpoTabela"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/menu.js"></script>
+  <script src="js/pontos.js"></script>
+</body>
+</html>

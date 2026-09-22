@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>SIMSEP - Medições</title>
+<link rel="icon" type="image/svg+xml" href="img/logo.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <div id="barraLateral" class="sidebar"></div>
+    <div class="conteudo">
+      <div class="cabecalho-pagina">
+        <div>
+          <h1>Lançamento de medições</h1>
+          <p class="subtitulo">Vibração, ruído e qualidade do ar por ponto de monitoramento</p>
+        </div>
+      </div>
+
+      <div class="painel">
+        <form id="formMedicao">
+          <div class="campo">
+            <label>Ponto de monitoramento</label>
+            <select id="pontoId" required></select>
+          </div>
+          <div class="campo">
+            <label>Detonação associada (opcional)</label>
+            <select id="detonacaoId">
+              <option value="">Nenhuma</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label>Tipo</label>
+            <select id="tipo" required>
+              <option value="vibracao">Vibração (mm/s)</option>
+              <option value="ruido">Ruído (dB)</option>
+              <option value="ar">Qualidade do ar (µg/m³)</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label>Valor</label>
+            <input type="number" step="0.01" id="valor" required>
+          </div>
+          <div class="campo">
+            <label>Unidade</label>
+            <input type="text" id="unidade" required>
+          </div>
+          <button type="submit">Registrar medição</button>
+          <p class="erro" id="msgErro"></p>
+        </form>
+      </div>
+
+      <div class="painel">
+        <form class="em-linha" id="formFiltro">
+          <div class="campo">
+            <label>De</label>
+            <input type="date" id="filtroInicio">
+          </div>
+          <div class="campo">
+            <label>Até</label>
+            <input type="date" id="filtroFim">
+          </div>
+          <button type="submit" class="secundario">Filtrar</button>
+          <button type="button" class="secundario" id="botaoLimparFiltro">Limpar</button>
+        </form>
+
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr><th>Ponto</th><th>Tipo</th><th>Valor</th><th>Unidade</th><th>Data/Hora</th></tr>
+            </thead>
+            <tbody id="corpoTabela"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/menu.js"></script>
+  <script src="js/medicoes.js"></script>
+</body>
+</html>

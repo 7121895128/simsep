@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>SIMSEP - Alertas</title>
+<link rel="icon" type="image/svg+xml" href="img/logo.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <div id="barraLateral" class="sidebar"></div>
+    <div class="conteudo">
+      <div class="cabecalho-pagina">
+        <div>
+          <h1>Painel de alertas</h1>
+          <p class="subtitulo">Ocorrências geradas quando uma medição ultrapassa o limite de segurança</p>
+        </div>
+      </div>
+
+      <div class="painel">
+        <form class="em-linha" id="formFiltro" style="margin-bottom:16px;">
+          <div class="campo">
+            <label>Status</label>
+            <select id="filtroStatus">
+              <option value="">Todos</option>
+              <option value="aberto">Em aberto</option>
+              <option value="resolvido">Resolvidos</option>
+            </select>
+          </div>
+          <button type="submit" class="secundario">Filtrar</button>
+        </form>
+
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr><th>Ponto</th><th>Tipo</th><th>Mensagem</th><th>Status</th><th>Data/Hora</th><th></th></tr>
+            </thead>
+            <tbody id="corpoTabela"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/menu.js"></script>
+  <script src="js/alertas.js"></script>
+</body>
+</html>

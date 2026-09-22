@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>SIMSEP - Login</title>
+<link rel="icon" type="image/svg+xml" href="img/logo.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="tela-login">
+    <div class="caixa-login">
+      <div class="marca">
+        <img src="img/logo.svg" alt="" class="logo-marca">
+        <div>
+          <strong>SIMSEP</strong>
+          <span>Monitoramento e controle de segurança em pedreiras</span>
+        </div>
+      </div>
+      <form id="formLogin">
+        <div class="campo">
+          <label>E-mail</label>
+          <input type="email" id="email" required autofocus>
+        </div>
+        <div class="campo">
+          <label>Senha</label>
+          <input type="password" id="senha" required>
+        </div>
+        <button type="submit" id="botaoEntrar">Entrar</button>
+        <p class="erro" id="msgErro"></p>
+      </form>
+    </div>
+  </div>
+  <script src="js/login.js"></script>
+</body>
+</html>

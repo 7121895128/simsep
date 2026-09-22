@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>SIMSEP - Detonações</title>
+<link rel="icon" type="image/svg+xml" href="img/logo.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <div id="barraLateral" class="sidebar"></div>
+    <div class="conteudo">
+      <div class="cabecalho-pagina">
+        <div>
+          <h1>Detonações programadas</h1>
+          <p class="subtitulo">Registro das detonações vinculadas a cada ponto de monitoramento</p>
+        </div>
+      </div>
+
+      <div class="painel">
+        <form id="formDetonacao">
+          <div class="campo">
+            <label>Identificador</label>
+            <input type="text" id="identificador" required placeholder="ex: DET-2026-001">
+          </div>
+          <div class="campo">
+            <label>Data e hora</label>
+            <input type="datetime-local" id="dataHora" required>
+          </div>
+          <div class="campo">
+            <label>Ponto de monitoramento</label>
+            <select id="pontoId" required></select>
+          </div>
+          <div class="campo">
+            <label>Descrição</label>
+            <textarea id="descricao"></textarea>
+          </div>
+          <button type="submit">Cadastrar detonação</button>
+          <p class="erro" id="msgErro"></p>
+        </form>
+      </div>
+
+      <div class="painel">
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr><th>Identificador</th><th>Data/Hora</th><th>Ponto</th><th>Responsável</th></tr>
+            </thead>
+            <tbody id="corpoTabela"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/menu.js"></script>
+  <script src="js/detonacoes.js"></script>
+</body>
+</html>
