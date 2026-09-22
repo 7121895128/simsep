@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIMSEP - Painel Público</title>
+<link rel="icon" type="image/svg+xml" href="img/logo.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="cabecalho-publico">
+    <div class="marca">
+      <img src="img/logo.svg" alt="" class="logo-marca">
+      <div>
+        <strong>SIMSEP</strong>
+        <span>Painel público de monitoramento</span>
+      </div>
+    </div>
+    <a href="index.html" class="botao secundario" style="text-decoration:none;">Acesso da equipe</a>
+  </header>
+
+  <div class="conteudo-publico">
+    <p class="subtitulo" style="margin-bottom:24px;">
+      Consulta pública das condições de segurança monitoradas nos pontos de operação.
+      Esta página é somente leitura e não exige login.
+    </p>
+
+    <div class="painel">
+      <h1 style="font-size:15px;">Condições atuais por ponto de monitoramento</h1>
+      <p class="aviso" style="margin-top:6px;">Última leitura registrada de vibração, ruído e qualidade do ar.</p>
+      <div class="grade-cartoes" id="grade-medicoes" style="margin-top:14px;"></div>
+    </div>
+
+    <div class="painel">
+      <h1 style="font-size:15px;">Próximas detonações programadas</h1>
+      <div class="tabela-scroll">
+        <table>
+          <thead>
+            <tr><th>Identificador</th><th>Data/Hora</th><th>Local</th><th>Observação</th></tr>
+          </thead>
+          <tbody id="corpoDetonacoes"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="painel">
+      <h1 style="font-size:15px;">Boletim de alertas recentes</h1>
+      <div class="tabela-scroll">
+        <table>
+          <thead>
+            <tr><th>Local</th><th>Tipo</th><th>Mensagem</th><th>Status</th><th>Data/Hora</th></tr>
+          </thead>
+          <tbody id="corpoAlertas"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/publico.js"></script>
+</body>
+</html>

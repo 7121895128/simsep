@@ -276,13 +276,13 @@ button:hover, .botao:hover {
   color: #fff;
 }
 
-button.secundario {
+button.secundario, a.secundario {
   background: transparent;
   color: var(--text);
   border: 1px solid var(--border);
 }
 
-button.secundario:hover {
+button.secundario:hover, a.secundario:hover {
   background: var(--panel-alt);
 }
 
@@ -376,6 +376,12 @@ td.num {
 .status.resolvido .ponto { background: var(--success); }
 .status.resolvido { color: var(--success); }
 
+.status.normal .ponto { background: var(--success); }
+.status.normal { color: var(--success); }
+
+.status.acima_limite .ponto { background: var(--danger); }
+.status.acima_limite { color: var(--danger); }
+
 /* ---- login ---- */
 
 .tela-login {
@@ -441,4 +447,87 @@ td.num {
   .conteudo {
     padding: 20px;
   }
+}
+
+/* ---- pagina publica ---- */
+
+.cabecalho-publico {
+  border-bottom: 1px solid var(--border);
+  padding: 18px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cabecalho-publico .marca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cabecalho-publico .marca strong {
+  font-size: 16px;
+  display: block;
+}
+
+.cabecalho-publico .marca span {
+  color: var(--text-muted);
+  font-size: 12.5px;
+}
+
+.conteudo-publico {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+}
+
+.grade-cartoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.cartao-medicao {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.cartao-medicao .topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.cartao-medicao .ponto-nome {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.cartao-medicao .tipo {
+  color: var(--text-muted);
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.cartao-medicao .valor {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 26px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.cartao-medicao .limite {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.cartao-medicao .atualizado {
+  color: var(--text-muted);
+  font-size: 11.5px;
+  margin-top: 10px;
 }
