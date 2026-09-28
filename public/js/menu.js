@@ -3,7 +3,8 @@ const ITENS_MENU = [
   { pagina: 'pontos.html', rotulo: 'Pontos' },
   { pagina: 'detonacoes.html', rotulo: 'Detonações' },
   { pagina: 'medicoes.html', rotulo: 'Medições' },
-  { pagina: 'alertas.html', rotulo: 'Alertas' }
+  { pagina: 'alertas.html', rotulo: 'Alertas' },
+  { pagina: 'usuarios.html', rotulo: 'Usuários', somenteAdmin: true }
 ];
 
 function protegerPagina() {
@@ -13,9 +14,23 @@ function protegerPagina() {
   }
 }
 
+function protegerPaginaAdmin() {
+  protegerPagina();
+  if (localStorage.getItem('perfil') !== 'admin') {
+    window.location.href = 'dashboard.html';
+  }
+}
+
 function sair() {
   localStorage.clear();
   window.location.href = 'index.html';
+}
+
+function idUsuarioLogado() {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+  const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+  return JSON.parse(atob(payload)).id;
 }
 
 function cabecalhoAutorizacao() {
@@ -51,10 +66,12 @@ function montarBarraLateral() {
   const nome = localStorage.getItem('nome') || '';
   const perfil = localStorage.getItem('perfil') || '';
 
-  const links = ITENS_MENU.map((item) => {
-    const classe = item.pagina === paginaAtual ? 'ativo' : '';
-    return `<a href="${item.pagina}" class="${classe}">${item.rotulo}</a>`;
-  }).join('');
+  const links = ITENS_MENU
+    .filter((item) => !item.somenteAdmin || perfil === 'admin')
+    .map((item) => {
+      const classe = item.pagina === paginaAtual ? 'ativo' : '';
+      return `<a href="${item.pagina}" class="${classe}">${item.rotulo}</a>`;
+    }).join('');
 
   alvo.innerHTML = `
     <div class="marca">

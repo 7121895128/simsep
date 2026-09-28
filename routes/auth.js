@@ -1,23 +1,32 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('../db');
 require('dotenv').config();
 
 router.post('/registrar', async (req, res) => {
   try {
-    const { nome, email, senha, perfil } = req.body;
+    const totalUsuarios = await pool.query('SELECT COUNT(*) FROM usuarios');
 
-    if (!nome || !email || !senha || !perfil) {
+    if (Number(totalUsuarios.rows[0].count) > 0) {
+      return res.status(403).json({
+        erro: 'Cadastro público desabilitado. Peça a um administrador para criar seu acesso.'
+      });
+    }
+
+    const { nome, email, senha } = req.body;
+
+    if (!nome || !email || !senha) {
       return res.status(400).json({ erro: 'Preencha todos os campos' });
     }
 
     const senhaHash = await bcrypt.hash(senha, 10);
 
     const resultado = await pool.query(
-      'INSERT INTO usuarios (nome, email, senha_hash, perfil) VALUES ($1, $2, $3, $4) RETURNING id, nome, email, perfil',
-      [nome, email, senhaHash, perfil]
+      `INSERT INTO usuarios (nome, email, senha_hash, perfil)
+       VALUES ($1, $2, $3, 'admin') RETURNING id, nome, email, perfil`,
+      [nome, email, senhaHash]
     );
 
     res.status(201).json(resultado.rows[0]);

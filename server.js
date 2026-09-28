@@ -9,6 +9,7 @@ const medicoesRoutes = require('./routes/medicoes');
 const alertasRoutes = require('./routes/alertas');
 const dashboardRoutes = require('./routes/dashboard');
 const publicoRoutes = require('./routes/publico');
+const usuariosRoutes = require('./routes/usuarios');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use('/api/medicoes', medicoesRoutes);
 app.use('/api/alertas', alertasRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/publico', publicoRoutes);
+app.use('/api/usuarios', usuariosRoutes);
 
 const PORT = process.env.PORT || 3000;
 
