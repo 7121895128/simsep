@@ -596,14 +596,14 @@ td.num {
   font-size: 12px;
 }
 
+.linha-indicador .tipo { grid-column: 1; grid-row: 1; }
+.linha-indicador .valor-num { grid-column: 1; grid-row: 2; font-size: 13px; }
+
 .linha-indicador .status {
+  grid-column: 2;
   grid-row: 1 / span 2;
   align-self: center;
   white-space: nowrap;
-}
-
-.linha-indicador .valor-num {
-  font-size: 13px;
 }
 
 @media print {
