@@ -3,7 +3,7 @@
 
 const { classificarSituacao } = require('./alertas');
 
-const ROTULOS_TIPO = { vibracao: 'Vibracao', ruido: 'Ruido', ar: 'Qualidade do ar' };
+const ROTULOS_TIPO = { vibracao: 'Vibração', ruido: 'Ruído', ar: 'Qualidade do ar' };
 
 function montarBoletim({ periodo, estatisticas, detonacoes, alertas, pontos }) {
   const porPonto = {};

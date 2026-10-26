@@ -582,17 +582,28 @@ td.num {
 }
 
 .linha-indicador {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 8px;
+  padding: 8px 0;
   border-top: 1px solid var(--border);
   font-size: 13px;
 }
 
 .linha-indicador .tipo {
   color: var(--text-muted);
+  text-transform: none;
+  font-size: 12px;
+}
+
+.linha-indicador .status {
+  grid-row: 1 / span 2;
+  align-self: center;
+  white-space: nowrap;
+}
+
+.linha-indicador .valor-num {
+  font-size: 13px;
 }
 
 @media print {
