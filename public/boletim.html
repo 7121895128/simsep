@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIMSEP - Boletim</title>
+<link rel="icon" type="image/svg+xml" href="img/logo.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="cabecalho-publico nao-imprimir">
+    <div class="marca">
+      <img src="img/logo.svg" alt="" class="logo-marca">
+      <div>
+        <strong>SIMSEP</strong>
+        <span>Boletim informativo para a comunidade</span>
+      </div>
+    </div>
+    <div>
+      <a href="publico.html" class="botao secundario" style="text-decoration:none;margin-right:8px;">Painel público</a>
+      <button type="button" class="secundario" onclick="window.print()">Imprimir / salvar PDF</button>
+    </div>
+  </header>
+
+  <div class="conteudo-publico">
+    <div class="painel">
+      <h1 id="tituloBoletim">Carregando boletim…</h1>
+      <p class="aviso" id="emitidoEm"></p>
+      <div id="conteudo"></div>
+    </div>
+  </div>
+
+  <script src="js/boletim-render.js"></script>
+  <script>
+    (async function () {
+      const id = new URLSearchParams(window.location.search).get('id');
+      const titulo = document.getElementById('tituloBoletim');
+      try {
+        const resposta = await fetch('/api/publico/boletins/' + encodeURIComponent(id));
+        const dados = await resposta.json();
+        if (!resposta.ok) throw new Error(dados.erro);
+        titulo.textContent = dados.titulo;
+        document.getElementById('emitidoEm').textContent = 'Emitido em ' + new Date(dados.emitido_em).toLocaleString('pt-BR');
+        document.getElementById('conteudo').innerHTML = renderizarBoletim(dados.conteudo);
+      } catch (err) {
+        titulo.textContent = 'Boletim não encontrado';
+      }
+    })();
+  </script>
+</body>
+</html>

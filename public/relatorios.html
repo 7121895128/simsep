@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>SIMSEP - Relatórios gerenciais</title>
+<link rel="icon" type="image/svg+xml" href="img/logo.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <div id="barraLateral" class="sidebar"></div>
+    <div class="conteudo">
+      <div class="cabecalho-pagina">
+        <div>
+          <h1>Relatórios gerenciais</h1>
+          <p class="subtitulo">Indicadores consolidados por período — visível apenas para administradores</p>
+        </div>
+        <button type="button" class="secundario" onclick="window.print()">Imprimir / PDF</button>
+      </div>
+
+      <div class="painel nao-imprimir">
+        <form class="em-linha" id="formPeriodo">
+          <div class="campo">
+            <label>De</label>
+            <input type="date" id="inicio">
+          </div>
+          <div class="campo">
+            <label>Até</label>
+            <input type="date" id="fim">
+          </div>
+          <button type="submit" class="secundario">Gerar relatório</button>
+        </form>
+        <p class="erro" id="msgErro"></p>
+        <p class="aviso" id="descricaoPeriodo"></p>
+      </div>
+
+      <div class="grade-resumo" id="gradeTotais"></div>
+
+      <div class="painel">
+        <h1 style="font-size:15px;">Alertas por tipo de medição</h1>
+        <div class="tabela-scroll">
+          <table>
+            <thead><tr><th>Tipo</th><th>Medições</th><th>Alertas</th><th>Média</th><th>Máximo</th><th>Limite</th><th>Taxa de alertas</th></tr></thead>
+            <tbody id="corpoTipo"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="painel">
+        <h1 style="font-size:15px;">Pontos com mais ocorrências</h1>
+        <div class="tabela-scroll">
+          <table>
+            <thead><tr><th>Ponto</th><th>Medições</th><th>Alertas</th><th>Em aberto</th><th></th></tr></thead>
+            <tbody id="corpoPonto"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="painel">
+        <h1 style="font-size:15px;">Evolução semanal</h1>
+        <div class="tabela-scroll">
+          <table>
+            <thead><tr><th>Semana (início)</th><th>Medições</th><th>Alertas</th><th></th></tr></thead>
+            <tbody id="corpoSemana"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="painel">
+        <h1 style="font-size:15px;">Detonações do período</h1>
+        <div class="tabela-scroll">
+          <table>
+            <thead><tr><th>Identificador</th><th>Data/Hora</th><th>Ponto</th><th>Medições vinculadas</th><th>Alertas</th></tr></thead>
+            <tbody id="corpoDetonacoes"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/menu.js"></script>
+  <script src="js/relatorios.js"></script>
+</body>
+</html>

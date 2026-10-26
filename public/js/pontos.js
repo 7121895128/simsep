@@ -1,4 +1,10 @@
 let pontoEmEdicao = null;
+let pontosCarregados = [];
+
+function editarPontoPorId(id) {
+  const ponto = pontosCarregados.find((p) => String(p.id) === String(id));
+  if (ponto) editarPonto(ponto);
+}
 
 async function carregarPontos() {
   const resposta = await apiFetch('/api/pontos');
@@ -12,6 +18,7 @@ async function carregarPontos() {
   }
 
   const pontos = resposta.dados;
+  pontosCarregados = pontos;
 
   if (pontos.length === 0) {
     corpo.innerHTML = '<tr><td colspan="4" class="vazio">Nenhum ponto cadastrado ainda. Use o formulário acima para cadastrar o primeiro.</td></tr>';
@@ -20,11 +27,11 @@ async function carregarPontos() {
 
   corpo.innerHTML = pontos.map((p) => `
     <tr>
-      <td>${p.nome}</td>
-      <td>${p.localizacao}</td>
-      <td>${p.descricao || '—'}</td>
+      <td>${esc(p.nome)}</td>
+      <td>${esc(p.localizacao)}</td>
+      <td>${esc(p.descricao) || '—'}</td>
       <td class="acoes-linha">
-        <button type="button" class="secundario" onclick='editarPonto(${JSON.stringify(p)})'>Editar</button>
+        <button type="button" class="secundario" data-id="${Number(p.id)}" onclick="editarPontoPorId(this.dataset.id)">Editar</button>
         <button type="button" class="perigo" onclick="excluirPonto(${p.id})">Excluir</button>
       </td>
     </tr>

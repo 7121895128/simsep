@@ -36,10 +36,10 @@ async function carregarDetonacoes() {
 
   corpo.innerHTML = resposta.dados.map((d) => `
     <tr>
-      <td>${d.identificador}</td>
+      <td>${esc(d.identificador)}</td>
       <td class="dado">${new Date(d.data_hora).toLocaleString('pt-BR')}</td>
-      <td>${d.ponto_nome}</td>
-      <td>${d.responsavel_nome}</td>
+      <td>${esc(d.ponto_nome)}</td>
+      <td>${esc(d.responsavel_nome)}</td>
     </tr>
   `).join('');
 }

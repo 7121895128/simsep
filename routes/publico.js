@@ -53,4 +53,32 @@ router.get('/alertas', async (req, res) => {
   }
 });
 
+// US07 - boletins emitidos, consulta publica (somente leitura)
+router.get('/boletins', async (req, res) => {
+  try {
+    const resultado = await pool.query(
+      `SELECT id, titulo, periodo_inicio, periodo_fim, resumo, emitido_em
+       FROM boletins ORDER BY emitido_em DESC LIMIT 20`
+    );
+    res.json(resultado.rows);
+  } catch (err) {
+    res.status(500).json({ erro: 'Erro ao listar boletins' });
+  }
+});
+
+router.get('/boletins/:id', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (Number.isNaN(id)) return res.status(400).json({ erro: 'Id invalido' });
+    const resultado = await pool.query(
+      `SELECT id, titulo, periodo_inicio, periodo_fim, resumo, conteudo, emitido_em FROM boletins WHERE id = $1`,
+      [id]
+    );
+    if (resultado.rows.length === 0) return res.status(404).json({ erro: 'Boletim nao encontrado' });
+    res.json(resultado.rows[0]);
+  } catch (err) {
+    res.status(500).json({ erro: 'Erro ao consultar boletim' });
+  }
+});
+
 module.exports = router;

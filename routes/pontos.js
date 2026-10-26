@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-const { autenticar } = require('../middleware/auth');
+const { autenticar, autorizar } = require('../middleware/auth');
 
 router.use(autenticar);
 
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', autorizar('operador', 'admin'), async (req, res) => {
   try {
     const { nome, localizacao, descricao } = req.body;
 
@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', autorizar('operador', 'admin'), async (req, res) => {
   try {
     const { nome, localizacao, descricao } = req.body;
 
@@ -62,11 +62,19 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+// Correcao: excluir ponto com medicoes/detonacoes vinculadas devolvia 500.
+// Agora responde 409 com mensagem clara e 404 quando o ponto nao existe.
+router.delete('/:id', autorizar('operador', 'admin'), async (req, res) => {
   try {
-    await pool.query('DELETE FROM pontos_monitoramento WHERE id = $1', [req.params.id]);
+    const resultado = await pool.query('DELETE FROM pontos_monitoramento WHERE id = $1', [req.params.id]);
+    if (resultado.rowCount === 0) {
+      return res.status(404).json({ erro: 'Ponto não encontrado' });
+    }
     res.status(204).send();
   } catch (err) {
+    if (err.code === '23503') {
+      return res.status(409).json({ erro: 'Ponto possui medicoes ou detonacoes vinculadas e nao pode ser excluido' });
+    }
     res.status(500).json({ erro: 'Erro ao excluir ponto' });
   }
 });

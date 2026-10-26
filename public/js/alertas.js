@@ -18,17 +18,17 @@ async function carregarAlertas() {
   }
 
   corpo.innerHTML = resposta.dados.map((a) => {
-    const botao = a.status === 'aberto'
-      ? `<button class="secundario" onclick="resolverAlerta(${a.id})">Marcar como resolvido</button>`
-      : '';
+    const botao = a.status === 'aberto' && podeLancar()
+      ? `<button class="secundario" onclick="resolverAlerta(${Number(a.id)})">Marcar como resolvido</button>`
+      : (a.status === 'resolvido' && a.resolvido_por_nome ? `<span class="aviso">por ${esc(a.resolvido_por_nome)}</span>` : '');
 
     return `
       <tr>
-        <td>${a.ponto_nome}</td>
-        <td>${a.tipo}</td>
-        <td>${a.mensagem}</td>
+        <td>${esc(a.ponto_nome)}</td>
+        <td>${esc(a.tipo)}</td>
+        <td>${esc(a.mensagem)}</td>
         <td><span class="status ${a.status}"><span class="ponto"></span>${a.status}</span></td>
-        <td class="dado">${new Date(a.data_hora).toLocaleString('pt-BR')}</td>
+        <td class="dado">${formatarDataHora(a.data_hora)}</td>
         <td>${botao}</td>
       </tr>
     `;

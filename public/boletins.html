@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>SIMSEP - Boletins</title>
+<link rel="icon" type="image/svg+xml" href="img/logo.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <div id="barraLateral" class="sidebar"></div>
+    <div class="conteudo">
+      <div class="cabecalho-pagina">
+        <div>
+          <h1>Boletins periódicos</h1>
+          <p class="subtitulo">Resumo das condições de segurança publicado para a comunidade</p>
+        </div>
+      </div>
+
+      <div class="painel" id="painelEmissao">
+        <form class="em-linha" id="formBoletim">
+          <div class="campo">
+            <label>Título</label>
+            <input type="text" id="titulo" placeholder="ex.: Boletim semanal 19 a 25/10">
+          </div>
+          <div class="campo">
+            <label>De</label>
+            <input type="date" id="inicio" required>
+          </div>
+          <div class="campo">
+            <label>Até</label>
+            <input type="date" id="fim" required>
+          </div>
+          <button type="button" class="secundario" id="botaoPrevia">Pré-visualizar</button>
+          <button type="submit" id="botaoEmitir" disabled>Emitir boletim</button>
+        </form>
+        <p class="erro" id="msgErro"></p>
+        <div id="previa"></div>
+      </div>
+
+      <div class="painel">
+        <h1 style="font-size:15px;">Boletins emitidos</h1>
+        <div class="tabela-scroll">
+          <table>
+            <thead><tr><th>Título</th><th>Período</th><th>Resumo</th><th>Emitido por</th><th>Emitido em</th><th></th></tr></thead>
+            <tbody id="corpoTabela"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/menu.js"></script>
+  <script src="js/boletim-render.js"></script>
+  <script src="js/boletins.js"></script>
+</body>
+</html>

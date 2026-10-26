@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const pool = require('../db');
 const { autenticar, autorizar } = require('../middleware/auth');
+const { validarUsuario } = require('../services/validacao');
 
 router.use(autenticar, autorizar('admin'));
 
@@ -21,12 +22,9 @@ router.post('/', async (req, res) => {
   try {
     const { nome, email, senha, perfil } = req.body;
 
-    if (!nome || !email || !senha || !perfil) {
-      return res.status(400).json({ erro: 'Preencha todos os campos' });
-    }
-
-    if (!['operador', 'engenheiro', 'admin'].includes(perfil)) {
-      return res.status(400).json({ erro: 'Perfil invalido' });
+    const validacao = validarUsuario({ nome, email, senha, perfil });
+    if (!validacao.valido) {
+      return res.status(400).json({ erro: validacao.erros.join('; ') });
     }
 
     const senhaHash = await bcrypt.hash(senha, 10);

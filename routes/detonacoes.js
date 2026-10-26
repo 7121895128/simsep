@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-const { autenticar } = require('../middleware/auth');
+const { autenticar, autorizar } = require('../middleware/auth');
 
 router.use(autenticar);
 
@@ -20,12 +20,15 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', autorizar('operador', 'admin'), async (req, res) => {
   try {
     const { identificador, data_hora, ponto_id, descricao } = req.body;
 
     if (!identificador || !data_hora || !ponto_id) {
       return res.status(400).json({ erro: 'Identificador, data/hora e ponto sao obrigatorios' });
+    }
+    if (Number.isNaN(Date.parse(data_hora))) {
+      return res.status(400).json({ erro: 'Data/hora invalida' });
     }
 
     const resultado = await pool.query(
@@ -38,6 +41,9 @@ router.post('/', async (req, res) => {
   } catch (err) {
     if (err.code === '23505') {
       return res.status(409).json({ erro: 'Identificador de detonacao ja existe' });
+    }
+    if (err.code === '23503') {
+      return res.status(400).json({ erro: 'Ponto de monitoramento nao existe' });
     }
     res.status(500).json({ erro: 'Erro ao cadastrar detonacao' });
   }

@@ -37,8 +37,8 @@ async function carregarResumo() {
 
   corpo.innerHTML = r.ultimosAlertas.map((a) => `
     <tr>
-      <td>${a.ponto_nome}</td>
-      <td>${a.mensagem}</td>
+      <td>${esc(a.ponto_nome)}</td>
+      <td>${esc(a.mensagem)}</td>
       <td class="dado">${new Date(a.data_hora).toLocaleString('pt-BR')}</td>
     </tr>
   `).join('');

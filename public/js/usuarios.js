@@ -20,9 +20,9 @@ async function carregarUsuarios() {
 
   corpo.innerHTML = resposta.dados.map((u) => `
     <tr>
-      <td>${u.nome}${u.id === meuId ? ' (você)' : ''}</td>
-      <td>${u.email}</td>
-      <td>${u.perfil}</td>
+      <td>${esc(u.nome)}${u.id === meuId ? ' (você)' : ''}</td>
+      <td>${esc(u.email)}</td>
+      <td>${esc(u.perfil)}</td>
       <td class="dado">${new Date(u.criado_em).toLocaleDateString('pt-BR')}</td>
       <td>${u.id === meuId ? '' : `<button class="perigo" onclick="excluirUsuario(${u.id})">Excluir</button>`}</td>
     </tr>
