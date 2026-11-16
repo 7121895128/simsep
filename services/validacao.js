@@ -18,11 +18,16 @@ function validarMedicao({ ponto_id, tipo, valor, unidade }) {
   if (!ponto_id || Number.isNaN(Number(ponto_id))) erros.push('Ponto de monitoramento invalido');
   if (!TIPOS_MEDICAO.includes(tipo)) erros.push('Tipo deve ser vibracao, ruido ou ar');
 
-  const numero = Number(valor);
-  if (valor === undefined || valor === null || valor === '' || Number.isNaN(numero)) {
+  // DEF-03: Number(true) === 1 e Number('Infinity') passavam na validacao antiga.
+  // Aceita apenas numero ou texto numerico finito, dentro de NUMERIC(10,2).
+  const textoValor = typeof valor === 'number' ? String(valor) : (typeof valor === 'string' ? valor.trim() : '');
+  const numero = /^-?\d+(\.\d+)?$/.test(textoValor) ? Number(textoValor) : NaN;
+  if (Number.isNaN(numero) || !Number.isFinite(numero)) {
     erros.push('Valor deve ser numerico');
   } else if (numero < 0) {
     erros.push('Valor nao pode ser negativo');
+  } else if (numero > 99999999.99) {
+    erros.push('Valor acima do maximo permitido (99.999.999,99)');
   }
 
   const unidadeFinal = (unidade && String(unidade).trim()) || UNIDADE_PADRAO[tipo];
@@ -37,7 +42,14 @@ function validarMedicao({ ponto_id, tipo, valor, unidade }) {
 // Converte "aaaa-mm-dd" (inicio/fim) em um intervalo fechado de timestamps.
 // Aceita so inicio ou so fim; retorna null quando nenhum foi informado.
 function montarPeriodo(inicio, fim) {
-  const dataValida = (d) => /^\d{4}-\d{2}-\d{2}$/.test(d) && !Number.isNaN(Date.parse(d));
+  // DEF-01: Date.parse('2026-02-30') devolve 2 de marco em vez de erro.
+  // Confere se a data reconstruida e identica ao texto informado.
+  const dataValida = (d) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return false;
+    const [a, m, dia] = d.split('-').map(Number);
+    const dt = new Date(Date.UTC(a, m - 1, dia));
+    return dt.getUTCFullYear() === a && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === dia;
+  };
 
   if (!inicio && !fim) return { ok: true, periodo: null };
   if (inicio && !dataValida(inicio)) return { ok: false, erro: 'Data inicial invalida (use aaaa-mm-dd)' };
@@ -53,13 +65,24 @@ function montarPeriodo(inicio, fim) {
   };
 }
 
-function validarUsuario({ nome, email, senha, perfil }) {
-  const erros = [];
-  if (!nome || String(nome).trim().length < 3) erros.push('Nome deve ter ao menos 3 caracteres');
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) erros.push('E-mail invalido');
-  if (!senha || String(senha).length < 6) erros.push('Senha deve ter ao menos 6 caracteres');
-  if (!PERFIS.includes(perfil)) erros.push('Perfil invalido');
-  return { valido: erros.length === 0, erros };
+// DEF-04: e-mail e normalizado (sem espacos, minusculas) para que
+// "Ana@X.com" e "ana@x.com" sejam o mesmo usuario no cadastro e no login.
+function normalizarEmail(email) {
+  return String(email || '').trim().toLowerCase();
 }
 
-module.exports = { TIPOS_MEDICAO, PERFIS, UNIDADE_PADRAO, validarMedicao, montarPeriodo, validarUsuario };
+function validarUsuario({ nome, email, senha, perfil }) {
+  const erros = [];
+  const emailNormalizado = normalizarEmail(email);
+  if (!nome || String(nome).trim().length < 3) erros.push('Nome deve ter ao menos 3 caracteres');
+  if (!emailNormalizado || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailNormalizado)) erros.push('E-mail invalido');
+  if (!senha || String(senha).length < 6) erros.push('Senha deve ter ao menos 6 caracteres');
+  if (!PERFIS.includes(perfil)) erros.push('Perfil invalido');
+  return {
+    valido: erros.length === 0,
+    erros,
+    dados: { nome: String(nome || '').trim(), email: emailNormalizado, senha, perfil }
+  };
+}
+
+module.exports = { TIPOS_MEDICAO, PERFIS, UNIDADE_PADRAO, validarMedicao, montarPeriodo, validarUsuario, normalizarEmail };

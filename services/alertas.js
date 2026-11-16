@@ -8,11 +8,12 @@ function avaliarLimite(medicao, limite) {
   const valorLimite = Number(limite.valor_limite);
 
   if (valor > valorLimite) {
-    const excedente = (((valor - valorLimite) / valorLimite) * 100).toFixed(1);
+    // DEF-05: com limite zero a divisao gerava "+Infinity%"; omite o percentual nesse caso.
+    const percentual = valorLimite > 0 ? ` (+${(((valor - valorLimite) / valorLimite) * 100).toFixed(1)}%)` : '';
     return {
       ultrapassou: true,
       mensagem: `Medicao de ${medicao.tipo} (${valor} ${medicao.unidade}) ultrapassou o limite de ` +
-        `${valorLimite.toFixed(2)} ${limite.unidade} (+${excedente}%)`
+        `${valorLimite.toFixed(2)} ${limite.unidade}${percentual}`
     };
   }
 

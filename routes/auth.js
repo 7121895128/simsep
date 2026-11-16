@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('../db');
 require('dotenv').config();
+const { normalizarEmail } = require('../services/validacao');
 
 router.post('/registrar', async (req, res) => {
   try {
@@ -15,7 +16,8 @@ router.post('/registrar', async (req, res) => {
       });
     }
 
-    const { nome, email, senha } = req.body;
+    const { nome, senha } = req.body;
+    const email = normalizarEmail(req.body.email);
 
     if (!nome || !email || !senha) {
       return res.status(400).json({ erro: 'Preencha todos os campos' });
@@ -40,7 +42,8 @@ router.post('/registrar', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const { email, senha } = req.body;
+    const { senha } = req.body;
+    const email = normalizarEmail(req.body.email);
 
     if (!email || !senha) {
       return res.status(400).json({ erro: 'Preencha e-mail e senha' });

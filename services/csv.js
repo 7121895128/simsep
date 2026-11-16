@@ -3,7 +3,13 @@
 
 function escapar(valor) {
   if (valor === null || valor === undefined) return '';
-  const texto = valor instanceof Date ? valor.toISOString() : String(valor);
+  let texto = valor instanceof Date ? valor.toISOString() : String(valor);
+  // DEF-02: celulas iniciadas por = + - @ sao interpretadas como formula pelo
+  // Excel/LibreOffice (CSV injection). Numeros sao preservados; texto recebe
+  // um apostrofo, que a planilha exibe como texto literal.
+  if (typeof valor !== 'number' && /^[=+\-@]/.test(texto) && !/^-?\d+([.,]\d+)?$/.test(texto)) {
+    texto = "'" + texto;
+  }
   if (/[;"\n\r]/.test(texto)) {
     return '"' + texto.replace(/"/g, '""') + '"';
   }

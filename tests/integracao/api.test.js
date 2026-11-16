@@ -74,6 +74,11 @@ describe('Autenticacao e autorizacao', () => {
     assert.equal((await chamar('GET', '/api/relatorios/gerencial', null, tokenEngenheiro)).status, 403);
   });
 
+  test('DEF-04: login aceita e-mail com maiusculas e espacos', async () => {
+    const r = await chamar('POST', '/api/auth/login', { email: '  ' + ADMIN.email.toUpperCase() + ' ', senha: ADMIN.senha });
+    assert.equal(r.status, 200);
+  });
+
   test('rota /api inexistente responde JSON 404', async () => {
     const r = await chamar('GET', '/api/nao-existe', null, tokenAdmin);
     assert.equal(r.status, 404);
@@ -141,6 +146,26 @@ describe('Pontos e medicoes', () => {
     assert.equal(r.status, 200);
     assert.match(r.headers.get('content-type'), /text\/csv/);
     assert.match(r.dados, /ID;Data\/Hora;Ponto;Tipo;Valor/);
+  });
+
+  test('DEF-01: historico com data inexistente (30/02) responde 400', async () => {
+    assert.equal((await chamar('GET', '/api/medicoes?inicio=2026-02-30&fim=2026-03-01', null, tokenAdmin)).status, 400);
+  });
+
+  test('DEF-03: valor booleano e Infinity respondem 400', async () => {
+    assert.equal((await chamar('POST', '/api/medicoes', { ponto_id: pontoId, tipo: 'ar', valor: true }, tokenAdmin)).status, 400);
+    assert.equal((await chamar('POST', '/api/medicoes', { ponto_id: pontoId, tipo: 'ar', valor: 'Infinity' }, tokenAdmin)).status, 400);
+  });
+
+  test('DEF-02: CSV neutraliza nome de ponto que comeca com formula', async () => {
+    const nome = `=HYPERLINK("http://x") ${Date.now()}`;
+    const ponto = await chamar('POST', '/api/pontos', { nome, localizacao: 'Teste CSV' }, tokenAdmin);
+    assert.equal(ponto.status, 201);
+    await chamar('POST', '/api/medicoes', { ponto_id: ponto.dados.id, tipo: 'ar', valor: 1 }, tokenAdmin);
+    const csv = await chamar('GET', `/api/medicoes/exportar?ponto_id=${ponto.dados.id}`, null, tokenAdmin);
+    assert.equal(csv.status, 200);
+    assert.ok(!csv.dados.includes(';=HYPERLINK'), 'formula chegou ao CSV sem neutralizar');
+    assert.ok(csv.dados.includes("'=HYPERLINK"));
   });
 
   test('excluir ponto com medicoes responde 409; ponto inexistente 404', async () => {

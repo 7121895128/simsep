@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const pool = require('../db');
 const { autenticar, autorizar } = require('../middleware/auth');
-const { validarUsuario } = require('../services/validacao');
+const { validarUsuario, normalizarEmail } = require('../services/validacao');
 
 router.use(autenticar, autorizar('admin'));
 
@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
     const resultado = await pool.query(
       `INSERT INTO usuarios (nome, email, senha_hash, perfil)
        VALUES ($1, $2, $3, $4) RETURNING id, nome, email, perfil, criado_em`,
-      [nome, email, senhaHash, perfil]
+      [validacao.dados.nome, validacao.dados.email, senhaHash, perfil]
     );
 
     res.status(201).json(resultado.rows[0]);
