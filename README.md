@@ -5,7 +5,7 @@ Sistema de Monitoramento e Controle de Seguranca em Pedreiras.
 ## Como rodar
 
 1. `npm install`
-2. Criar o banco `simsep` no PostgreSQL e rodar `sql/schema.sql` (banco já existente de versões anteriores: rodar apenas `sql/migracao_sprint1.sql`)
+2. Criar o banco `simsep` no PostgreSQL e rodar `sql/schema.sql` (banco já existente: rodar `sql/migracao_sprint1.sql` e `sql/migracao_entrega4.sql`; massa de exemplo em `sql/seed_exemplo.sql`)
 3. Copiar `.env.example` para `.env` e preencher com os dados do seu banco
 4. `npm start`
 5. Acessar `http://localhost:3000`
@@ -37,8 +37,8 @@ Invoke-RestMethod -Uri http://localhost:3000/api/auth/registrar -Method Post -Co
 ## Testes
 
 ```bash
-npm test                 # testes unitários (regras de negócio, sem banco)
-npm run test:integracao  # testes de API — exige servidor rodando (npm start) e banco com o schema aplicado
+npm test                 # 36 testes unitários (regras de negócio, sem banco)
+npm run test:integracao  # 24 testes de API — exige servidor rodando (npm start) e banco com o schema aplicado
 ```
 
 Os testes de integração criam o primeiro admin automaticamente em um banco vazio. Em um banco que já tem usuários, informe um admin existente: `ADMIN_EMAIL=... ADMIN_SENHA=... npm run test:integracao`.
