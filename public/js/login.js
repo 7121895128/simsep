@@ -35,3 +35,11 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
     botao.textContent = 'Entrar';
   }
 });
+
+// AH-01: explica por que o usuario voltou para o login
+(function () {
+  const motivo = new URLSearchParams(window.location.search).get('motivo');
+  if (motivo === 'sessao_expirada') {
+    document.getElementById('msgErro').textContent = 'Sua sessão expirou. Entre novamente para continuar.';
+  }
+})();

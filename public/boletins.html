@@ -2,6 +2,7 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SIMSEP - Boletins</title>
 <link rel="icon" type="image/svg+xml" href="img/logo.svg">
 <link rel="stylesheet" href="css/style.css">
@@ -34,7 +35,7 @@
           <button type="button" class="secundario" id="botaoPrevia">Pré-visualizar</button>
           <button type="submit" id="botaoEmitir" disabled>Emitir boletim</button>
         </form>
-        <p class="erro" id="msgErro"></p>
+        <p class="erro" id="msgErro" role="status" aria-live="polite"></p>
         <div id="previa"></div>
       </div>
 

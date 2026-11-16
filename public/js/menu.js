@@ -44,9 +44,10 @@ function protegerPaginaAdmin() {
   }
 }
 
-function sair() {
+// AH-01: ao expirar a sessao o usuario era devolvido ao login sem explicacao.
+function sair(motivo) {
   localStorage.clear();
-  window.location.href = 'index.html';
+  window.location.href = 'index.html' + (motivo ? '?motivo=' + encodeURIComponent(motivo) : '');
 }
 
 function idUsuarioLogado() {
@@ -69,7 +70,7 @@ async function apiFetch(url, opcoes = {}) {
   // Correcao (Sprint 1): qualquer 403 derrubava a sessao, inclusive o 403 de
   // "perfil sem permissao". Agora so sai quando o token falta ou e invalido.
   if (resposta.status === 401) {
-    sair();
+    sair('sessao_expirada');
     return null;
   }
 
@@ -81,7 +82,7 @@ async function apiFetch(url, opcoes = {}) {
   }
 
   if (resposta.status === 403 && dados && dados.erro === 'Token invalido') {
-    sair();
+    sair('sessao_expirada');
     return null;
   }
 

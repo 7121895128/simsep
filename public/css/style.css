@@ -9,7 +9,7 @@
   --text-muted: #8b94a0;
   --accent: #e8a33d;
   --accent-dark: #b87b26;
-  --danger: #d9534f;
+  --danger: #e8665f; /* AH-04: contraste 5.1:1 sobre o painel (WCAG AA) */
   --success: #4caf7d;
   --focus: #f2c94c;
   --sidebar-w: 220px;

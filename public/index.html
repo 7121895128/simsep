@@ -2,6 +2,7 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SIMSEP - Login</title>
 <link rel="icon" type="image/svg+xml" href="img/logo.svg">
 <link rel="stylesheet" href="css/style.css">
@@ -26,7 +27,7 @@
           <input type="password" id="senha" required>
         </div>
         <button type="submit" id="botaoEntrar">Entrar</button>
-        <p class="erro" id="msgErro"></p>
+        <p class="erro" id="msgErro" role="status" aria-live="polite"></p>
       </form>
       <p class="aviso" style="margin-top:16px;text-align:center;">
         É morador da região? <a href="publico.html">Veja o painel público</a>, sem precisar de login.
