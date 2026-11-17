@@ -6,6 +6,7 @@ const ITENS_MENU = [
   { pagina: 'alertas.html', rotulo: 'Alertas' },
   { pagina: 'boletins.html', rotulo: 'Boletins' },
   { pagina: 'relatorios.html', rotulo: 'Relatórios', somenteAdmin: true },
+  { pagina: 'limites.html', rotulo: 'Limites', somenteAdmin: true },
   { pagina: 'usuarios.html', rotulo: 'Usuários', somenteAdmin: true }
 ];
 

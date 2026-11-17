@@ -36,7 +36,8 @@ async function gerarRelatorio() {
   document.getElementById('gradeTotais').innerHTML = `
     <div class="cartao-resumo"><div class="numero">${t.medicoes}</div><div class="rotulo">Medições no período</div></div>
     <div class="cartao-resumo"><div class="numero">${t.detonacoes}</div><div class="rotulo">Detonações no período</div></div>
-    <div class="cartao-resumo alerta"><div class="numero">${t.alertas}</div><div class="rotulo">Alertas gerados</div></div>
+    <div class="cartao-resumo alerta"><div class="numero">${t.alertas}</div><div class="rotulo">Alertas gerados (${t.alertas_criticos} críticos)</div></div>
+    <div class="cartao-resumo ${t.alertas_atrasados ? 'alerta' : ''}"><div class="numero">${t.alertas_atrasados}</div><div class="rotulo">Abertos há mais de 48 h</div></div>
     <div class="cartao-resumo"><div class="numero">${t.percentual_resolvidos}%</div><div class="rotulo">Alertas resolvidos (${t.alertas_resolvidos}/${t.alertas})</div></div>
     <div class="cartao-resumo"><div class="numero">${r.tempo_resolucao.horas_medias ?? '—'}<span class="unidade">h</span></div><div class="rotulo">Tempo médio de resolução</div></div>
   `;

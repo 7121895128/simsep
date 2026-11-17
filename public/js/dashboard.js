@@ -23,7 +23,7 @@ async function carregarResumo() {
       <div class="rotulo">Medições lançadas</div>
     </div>
     <div class="cartao-resumo alerta">
-      <div class="numero">${r.alertasAbertos}</div>
+      <div class="numero">${r.alertasAbertos}${r.alertasAtrasados ? ` <span class="unidade" style="color:var(--danger)">${r.alertasAtrasados} atrasado(s) há +${r.horasAtraso} h</span>` : ''}</div>
       <div class="rotulo">Alertas em aberto</div>
     </div>
   `;
@@ -37,8 +37,8 @@ async function carregarResumo() {
 
   corpo.innerHTML = r.ultimosAlertas.map((a) => `
     <tr>
-      <td>${esc(a.ponto_nome)}</td>
-      <td>${esc(a.mensagem)}</td>
+      <td>${esc(a.ponto_nome)}${a.nivel === 'critico' ? ' <span class="status acima_limite">crítico</span>' : ''}</td>
+      <td>${esc(a.mensagem)}${a.atrasado ? ' <span class="status acima_limite">atrasado</span>' : ''}</td>
       <td class="dado">${new Date(a.data_hora).toLocaleString('pt-BR')}</td>
     </tr>
   `).join('');

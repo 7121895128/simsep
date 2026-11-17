@@ -1,6 +1,6 @@
 {
   "name": "simsep",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Sistema de Monitoramento e Controle de Seguranca em Pedreiras",
   "main": "server.js",
   "scripts": {

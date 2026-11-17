@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIMSEP - Limites de segurança</title>
+<link rel="icon" type="image/svg+xml" href="img/logo.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <div id="barraLateral" class="sidebar"></div>
+    <div class="conteudo">
+      <div class="cabecalho-pagina">
+        <div>
+          <h1>Limites de segurança</h1>
+          <p class="subtitulo">Valores que disparam alerta automático. Alertas já gerados não mudam quando o limite muda.</p>
+        </div>
+      </div>
+
+      <div class="painel">
+        <div class="tabela-scroll">
+          <table>
+            <thead><tr><th>Tipo</th><th>Limite atual</th><th>Unidade</th><th>Última alteração</th><th>Novo limite</th><th>Motivo</th><th></th></tr></thead>
+            <tbody id="corpoLimites"></tbody>
+          </table>
+        </div>
+        <p class="erro" id="msgErro" role="status" aria-live="polite"></p>
+        <p class="aviso">Regra: o limite deve ser maior que zero. Leituras acima do limite geram alerta <b>alto</b>; acima de 150% do limite geram alerta <b>crítico</b>, que só pode ser resolvido com uma observação.</p>
+      </div>
+
+      <div class="painel">
+        <h1 style="font-size:15px;">Histórico de alterações</h1>
+        <div class="tabela-scroll">
+          <table>
+            <thead><tr><th>Quando</th><th>Tipo</th><th>De</th><th>Para</th><th>Quem</th><th>Motivo</th></tr></thead>
+            <tbody id="corpoHistorico"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="js/menu.js"></script>
+  <script src="js/limites.js"></script>
+</body>
+</html>

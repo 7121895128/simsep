@@ -4,6 +4,7 @@ const pool = require('../db');
 const { autenticar, autorizar } = require('../middleware/auth');
 const { validarMedicao, montarPeriodo, TIPOS_MEDICAO } = require('../services/validacao');
 const { avaliarLimite } = require('../services/alertas');
+const { nivelAlerta, validarVinculoDetonacao, alertaAtrasado } = require('../services/regras');
 const { gerarCsv } = require('../services/csv');
 
 router.use(autenticar);
@@ -134,6 +135,16 @@ router.post('/', autorizar('operador', 'admin'), async (req, res) => {
 
   const cliente = await pool.connect();
   try {
+    // RN16: so vincula a detonacao ja ocorrida, nas ultimas 48h
+    if (detonacao_id) {
+      const det = await cliente.query('SELECT data_hora FROM detonacoes WHERE id = $1', [detonacao_id]);
+      const vinculo = validarVinculoDetonacao(det.rows[0] ? det.rows[0].data_hora : null);
+      if (!vinculo.ok) {
+        cliente.release();
+        return res.status(400).json({ erro: vinculo.erro });
+      }
+    }
+
     await cliente.query('BEGIN');
 
     const medicao = await cliente.query(
@@ -147,9 +158,11 @@ router.post('/', autorizar('operador', 'admin'), async (req, res) => {
 
     let alertaGerado = null;
     if (avaliacao.ultrapassou) {
+      // RN14: nivel gravado no momento da medicao (nao muda se o limite mudar depois)
+      const nivel = nivelAlerta(valor, limite.rows[0].valor_limite);
       const alerta = await cliente.query(
-        `INSERT INTO alertas (medicao_id, mensagem, status) VALUES ($1, $2, 'aberto') RETURNING *`,
-        [medicao.rows[0].id, avaliacao.mensagem]
+        `INSERT INTO alertas (medicao_id, mensagem, status, nivel) VALUES ($1, $2, 'aberto', $3) RETURNING *`,
+        [medicao.rows[0].id, avaliacao.mensagem, nivel]
       );
       alertaGerado = alerta.rows[0];
     }

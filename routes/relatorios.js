@@ -26,6 +26,8 @@ router.get('/gerencial', async (req, res) => {
            (SELECT COUNT(*) FROM medicoes m WHERE ${filtroMed}) AS total_medicoes,
            (SELECT COUNT(*) FROM alertas a WHERE ${filtroAlerta}) AS total_alertas,
            (SELECT COUNT(*) FROM alertas a WHERE ${filtroAlerta} AND a.status = 'resolvido') AS alertas_resolvidos,
+           (SELECT COUNT(*) FROM alertas a WHERE ${filtroAlerta} AND a.nivel = 'critico') AS alertas_criticos,
+           (SELECT COUNT(*) FROM alertas a WHERE a.status = 'aberto' AND a.data_hora < now() - interval '48 hours') AS alertas_atrasados,
            (SELECT COUNT(*) FROM detonacoes d WHERE ${filtroDet}) AS total_detonacoes,
            (SELECT COUNT(*) FROM pontos_monitoramento) AS total_pontos`,
         params
@@ -96,6 +98,8 @@ router.get('/gerencial', async (req, res) => {
         detonacoes: Number(t.total_detonacoes),
         alertas: totalAlertas,
         alertas_resolvidos: resolvidos,
+        alertas_criticos: Number(t.alertas_criticos),
+        alertas_atrasados: Number(t.alertas_atrasados),
         percentual_resolvidos: totalAlertas === 0 ? 100 : Math.round((resolvidos / totalAlertas) * 100)
       },
       tempo_resolucao: tempoResolucao.rows[0],

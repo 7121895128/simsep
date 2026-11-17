@@ -11,6 +11,7 @@ const ADMIN = { nome: 'Admin Teste', email: `admin.${Date.now()}@teste.com`, sen
 let tokenAdmin;
 let tokenEngenheiro;
 let pontoId;
+let detonacaoFuturaId;
 
 async function chamar(metodo, rota, corpo, token) {
   const resposta = await fetch(API + rota, {
@@ -207,13 +208,90 @@ describe('Alertas, relatorios e boletins', () => {
 
     assert.equal((await chamar('POST', '/api/boletins', { inicio: hoje, fim: hoje }, tokenEngenheiro)).status, 403);
 
-    const emitido = await chamar('POST', '/api/boletins', { titulo: 'Boletim de teste', inicio: hoje, fim: hoje }, tokenAdmin);
+    // RN17: periodo encerrado e inedito (usa um intervalo aleatorio no passado distante)
+    const dia = 1 + Math.floor(Math.random() * 28);
+    const inicio = `2020-01-${String(dia).padStart(2, '0')}`;
+    const emitido = await chamar('POST', '/api/boletins', { titulo: 'Boletim de teste', inicio, fim: inicio }, tokenAdmin);
     assert.equal(emitido.status, 201);
 
     const publico = await chamar('GET', `/api/publico/boletins/${emitido.dados.id}`);
     assert.equal(publico.status, 200);
     assert.equal(publico.dados.titulo, 'Boletim de teste');
     assert.ok(publico.dados.conteudo.pontos);
+  });
+
+  test('RN13: admin altera limite com historico; engenheiro nao pode; valor zero e rejeitado', async () => {
+    const antes = await chamar('GET', '/api/limites', null, tokenAdmin);
+    assert.equal(antes.status, 200);
+    const atual = Number(antes.dados.find((l) => l.tipo === 'ar').valor_limite);
+
+    assert.equal((await chamar('PUT', '/api/limites/ar', { valor_limite: 0 }, tokenAdmin)).status, 400);
+    assert.equal((await chamar('PUT', '/api/limites/ar', { valor_limite: atual + 1 }, tokenEngenheiro)).status, 403);
+    assert.equal((await chamar('PUT', '/api/limites/ar', { valor_limite: atual }, tokenAdmin)).status, 409);
+
+    const alterado = await chamar('PUT', '/api/limites/ar', { valor_limite: atual + 1, motivo: 'teste automatizado' }, tokenAdmin);
+    assert.equal(alterado.status, 200);
+    assert.equal(Number(alterado.dados.valor_limite), atual + 1);
+
+    const historico = await chamar('GET', '/api/limites/historico', null, tokenAdmin);
+    assert.equal(historico.status, 200);
+    assert.equal(historico.dados[0].motivo, 'teste automatizado');
+
+    // volta ao valor original para nao interferir nos demais testes
+    assert.equal((await chamar('PUT', '/api/limites/ar', { valor_limite: atual, motivo: 'reversao do teste' }, tokenAdmin)).status, 200);
+  });
+
+  test('RN14: medicao acima de 150% do limite gera alerta critico, que exige observacao para resolver', async () => {
+    const r = await chamar('POST', '/api/medicoes', { ponto_id: pontoId, tipo: 'ruido', valor: 130 }, tokenAdmin); // limite 85 -> 153%
+    assert.equal(r.status, 201);
+    assert.equal(r.dados.alerta.nivel, 'critico');
+
+    const semObs = await chamar('PUT', `/api/alertas/${r.dados.alerta.id}/resolver`, { observacao: '' }, tokenAdmin);
+    assert.equal(semObs.status, 400);
+
+    const comObs = await chamar('PUT', `/api/alertas/${r.dados.alerta.id}/resolver`, { observacao: 'Britador parado para manutencao' }, tokenAdmin);
+    assert.equal(comObs.status, 200);
+    assert.equal(comObs.dados.resolucao_obs, 'Britador parado para manutencao');
+  });
+
+  test('RN15: detonacao fora da janela (domingo, 19h, ou para daqui a 2h) responde 400', async () => {
+    const base = { ponto_id: pontoId };
+    const proximoDomingo = new Date(); proximoDomingo.setDate(proximoDomingo.getDate() + ((7 - proximoDomingo.getDay()) % 7 || 7)); proximoDomingo.setHours(10, 0, 0, 0);
+    assert.equal((await chamar('POST', '/api/detonacoes', { ...base, identificador: 'T-DOM-' + Date.now(), data_hora: proximoDomingo.toISOString() }, tokenAdmin)).status, 400);
+
+    const daqui2h = new Date(Date.now() + 2 * 36e5);
+    assert.equal((await chamar('POST', '/api/detonacoes', { ...base, identificador: 'T-2H-' + Date.now(), data_hora: daqui2h.toISOString() }, tokenAdmin)).status, 400);
+
+    // proximo dia util valido, 10:00, com mais de 24h
+    const valida = new Date(); valida.setDate(valida.getDate() + 2); valida.setHours(10, 0, 0, 0);
+    while (valida.getDay() === 0 || valida.getDay() === 6) valida.setDate(valida.getDate() + 1);
+    const ok = await chamar('POST', '/api/detonacoes', { ...base, identificador: 'T-OK-' + Date.now(), data_hora: valida.toISOString() }, tokenAdmin);
+    assert.equal(ok.status, 201);
+    detonacaoFuturaId = ok.dados.id;
+  });
+
+  test('RN16: medicao nao pode ser vinculada a detonacao futura', async () => {
+    const r = await chamar('POST', '/api/medicoes', { ponto_id: pontoId, tipo: 'ar', valor: 10, detonacao_id: detonacaoFuturaId }, tokenAdmin);
+    assert.equal(r.status, 400);
+    assert.match(r.dados.erro, /ainda nao ocorreu/);
+  });
+
+  test('RN17: boletim nao pode cobrir periodo em aberto nem repetir periodo', async () => {
+    const hoje = new Date().toISOString().slice(0, 10);
+    assert.equal((await chamar('POST', '/api/boletins', { inicio: hoje, fim: hoje }, tokenAdmin)).status, 409);
+
+    const fim = new Date(); fim.setDate(fim.getDate() - 1);
+    const inicio = new Date(); inicio.setDate(inicio.getDate() - 7);
+    const periodo = { inicio: inicio.toISOString().slice(0, 10), fim: fim.toISOString().slice(0, 10) };
+    const primeiro = await chamar('POST', '/api/boletins', { titulo: 'Boletim RN17', ...periodo }, tokenAdmin);
+    assert.ok([201, 409].includes(primeiro.status));
+    assert.equal((await chamar('POST', '/api/boletins', { titulo: 'Repetido', ...periodo }, tokenAdmin)).status, 409);
+  });
+
+  test('RN18: listagem de alertas informa se esta atrasado (campo booleano)', async () => {
+    const r = await chamar('GET', '/api/alertas', null, tokenAdmin);
+    assert.equal(r.status, 200);
+    assert.ok(r.dados.every((a) => typeof a.atrasado === 'boolean'));
   });
 
   test('painel publico nao exige token e nao expoe dados de usuarios', async () => {

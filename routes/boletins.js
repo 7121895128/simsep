@@ -6,6 +6,7 @@ const pool = require('../db');
 const { autenticar, autorizar } = require('../middleware/auth');
 const { montarPeriodo } = require('../services/validacao');
 const { montarBoletim } = require('../services/boletim');
+const { validarPeriodoBoletim } = require('../services/regras');
 
 async function consultarDadosBoletim(periodo) {
   const params = [periodo.inicio, periodo.fim];
@@ -87,6 +88,11 @@ router.post('/', autorizar('operador', 'admin'), async (req, res) => {
   if (!periodo.periodo || !inicio || !fim) return res.status(400).json({ erro: 'Informe inicio e fim do periodo' });
 
   try {
+    // RN17: periodo encerrado e nao repetido
+    const existentes = await pool.query('SELECT periodo_inicio::text AS inicio, periodo_fim::text AS fim FROM boletins');
+    const regra = validarPeriodoBoletim(inicio, fim, new Date(), existentes.rows);
+    if (!regra.ok) return res.status(409).json({ erro: regra.erro });
+
     const conteudo = await consultarDadosBoletim(periodo.periodo);
     const tituloFinal = (titulo && String(titulo).trim()) || `Boletim de ${inicio} a ${fim}`;
 
@@ -97,6 +103,7 @@ router.post('/', autorizar('operador', 'admin'), async (req, res) => {
     );
     res.status(201).json(resultado.rows[0]);
   } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ erro: 'Ja existe um boletim emitido para este mesmo periodo' });
     res.status(500).json({ erro: 'Erro ao emitir boletim' });
   }
 });

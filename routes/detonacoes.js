@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const { autenticar, autorizar } = require('../middleware/auth');
+const { validarJanelaDetonacao } = require('../services/regras');
 
 router.use(autenticar);
 
@@ -27,8 +28,10 @@ router.post('/', autorizar('operador', 'admin'), async (req, res) => {
     if (!identificador || !data_hora || !ponto_id) {
       return res.status(400).json({ erro: 'Identificador, data/hora e ponto sao obrigatorios' });
     }
-    if (Number.isNaN(Date.parse(data_hora))) {
-      return res.status(400).json({ erro: 'Data/hora invalida' });
+    // RN15: dia util, 08:00-17:00, com 24h de antecedencia
+    const janela = validarJanelaDetonacao(data_hora);
+    if (!janela.ok) {
+      return res.status(400).json({ erro: janela.erro });
     }
 
     const resultado = await pool.query(

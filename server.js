@@ -12,6 +12,7 @@ const publicoRoutes = require('./routes/publico');
 const usuariosRoutes = require('./routes/usuarios');
 const relatoriosRoutes = require('./routes/relatorios');
 const boletinsRoutes = require('./routes/boletins');
+const limitesRoutes = require('./routes/limites');
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use('/api/publico', publicoRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/relatorios', relatoriosRoutes);
 app.use('/api/boletins', boletinsRoutes);
+app.use('/api/limites', limitesRoutes);
 
 // Rota de saude usada pelos testes de integracao
 app.get('/api/saude', (req, res) => res.json({ ok: true, versao: require('./package.json').version }));

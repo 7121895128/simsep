@@ -93,7 +93,7 @@ async function carregarAlertas() {
         <td data-rotulo="Ponto">${esc(a.ponto_nome)}</td>
         <td data-rotulo="Tipo">${ROTULOS_TIPO[a.tipo] || a.tipo}</td>
         <td data-rotulo="Mensagem">${esc(a.mensagem)}</td>
-        <td data-rotulo="Situação"><span class="status ${a.status}"><span class="ponto"></span>${a.status}</span></td>
+        <td data-rotulo="Situação"><span class="status ${a.status}"><span class="ponto"></span>${a.status}</span>${a.nivel === 'critico' ? ' <span class="status acima_limite">crítico</span>' : ''}</td>
         <td data-rotulo="Data/Hora" class="dado">${new Date(a.data_hora).toLocaleString('pt-BR')}</td>
       </tr>
     `).join('');

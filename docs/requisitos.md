@@ -43,16 +43,27 @@
 | RN06 | Admin não exclui a si nem o último admin; registro público só sem usuários |
 | RN07 | Operador/Admin lançam e emitem; Engenheiro consulta; Admin gerencia usuários e relatórios |
 | RN08 | Boletim emitido é imutável (retrato em JSONB) |
+| RN09 | Períodos de consulta: `aaaa-mm-dd`, data real (30/02 rejeitado), início ≤ fim |
+| RN10 | Senha só como hash; login não revela se o e-mail existe; e-mail normalizado (minúsculas, sem espaços) |
+| RN11 | Painel público é somente leitura e não expõe dados pessoais |
+| RN12 | E-mail, nome do ponto e identificador da detonação são únicos |
+| RN13 | Limites de segurança são editáveis só pelo Admin, com valor > 0 e histórico (quem, quando, de/para, motivo); alertas já gerados não mudam |
+| RN14 | Nível do alerta: **alto** acima do limite, **crítico** acima de 150% do limite; crítico só é resolvido com observação (≥ 10 caracteres) |
+| RN15 | Detonações só em dias úteis, das 08:00 às 17:00, programadas com ≥ 24 h de antecedência |
+| RN16 | Medição só se vincula a detonação já ocorrida, nas últimas 48 h |
+| RN17 | Boletim só cobre período encerrado (fim < hoje) e não repete período já emitido |
+| RN18 | Alerta aberto há mais de 48 h é marcado como atrasado no painel, na listagem e no relatório |
 
 ## Dicionário de dados
 | Tabela | Propósito | Chaves | Restrições |
 |---|---|---|---|
 | usuarios | Contas e perfis | PK id | email UNIQUE; perfil CHECK |
 | pontos_monitoramento | Locais medidos | PK id | nome UNIQUE; RESTRICT na exclusão |
-| limites_seguranca | Limite por tipo | PK id | tipo UNIQUE CHECK |
+| limites_seguranca | Limite por tipo | PK id; FK atualizado_por | tipo UNIQUE CHECK; valor_limite > 0 |
 | detonacoes | Detonações | PK id; FK ponto_id, responsavel_id | identificador UNIQUE |
 | medicoes | Leituras | PK id; FK ponto_id, detonacao_id (opcional) | tipo CHECK; valor ≥ 0; índices |
-| alertas | Ocorrências | PK id; FK medicao_id, resolvido_por | status CHECK; resolvido_em |
+| alertas | Ocorrências | PK id; FK medicao_id, resolvido_por | status CHECK; nivel CHECK (alto/critico); resolvido_em; resolucao_obs |
+| limites_historico | Auditoria dos limites | PK id; FK alterado_por | valor_anterior, valor_novo, motivo |
 | boletins | Boletins emitidos | PK id; FK emitido_por | periodo_fim ≥ periodo_inicio; conteudo JSONB |
 
 Diagrama: `modelo-de-dados.svg`.

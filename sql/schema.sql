@@ -26,8 +26,10 @@ CREATE TABLE detonacoes (
 CREATE TABLE limites_seguranca (
   id SERIAL PRIMARY KEY,
   tipo VARCHAR(30) UNIQUE NOT NULL CHECK (tipo IN ('vibracao','ruido','ar')),
-  valor_limite NUMERIC(10,2) NOT NULL,
-  unidade VARCHAR(15) NOT NULL
+  valor_limite NUMERIC(10,2) NOT NULL CHECK (valor_limite > 0),
+  unidade VARCHAR(15) NOT NULL,
+  atualizado_em TIMESTAMP,
+  atualizado_por INTEGER REFERENCES usuarios(id)
 );
 
 CREATE TABLE medicoes (
@@ -46,9 +48,22 @@ CREATE TABLE alertas (
   medicao_id INTEGER NOT NULL REFERENCES medicoes(id),
   mensagem TEXT NOT NULL,
   status VARCHAR(20) NOT NULL DEFAULT 'aberto' CHECK (status IN ('aberto','resolvido')),
+  nivel VARCHAR(10) NOT NULL DEFAULT 'alto' CHECK (nivel IN ('alto','critico')),
   data_hora TIMESTAMP DEFAULT now(),
   resolvido_em TIMESTAMP,
-  resolvido_por INTEGER REFERENCES usuarios(id)
+  resolvido_por INTEGER REFERENCES usuarios(id),
+  resolucao_obs TEXT
+);
+
+-- Historico de alteracoes dos limites de seguranca (RN13)
+CREATE TABLE limites_historico (
+  id SERIAL PRIMARY KEY,
+  tipo VARCHAR(20) NOT NULL,
+  valor_anterior NUMERIC(10,2),
+  valor_novo NUMERIC(10,2) NOT NULL,
+  alterado_por INTEGER NOT NULL REFERENCES usuarios(id),
+  alterado_em TIMESTAMP NOT NULL DEFAULT now(),
+  motivo TEXT
 );
 
 -- Boletins periodicos emitidos para a comunidade (US07)
@@ -69,6 +84,7 @@ CREATE INDEX idx_medicoes_ponto_tipo ON medicoes (ponto_id, tipo);
 CREATE INDEX idx_alertas_status ON alertas (status);
 CREATE INDEX idx_detonacoes_data_hora ON detonacoes (data_hora);
 CREATE INDEX idx_boletins_emitido_em ON boletins (emitido_em DESC);
+CREATE UNIQUE INDEX uq_boletins_periodo ON boletins (periodo_inicio, periodo_fim);
 
 INSERT INTO limites_seguranca (tipo, valor_limite, unidade) VALUES
 ('vibracao', 5.00, 'mm/s'),

@@ -40,7 +40,7 @@ router.get('/medicoes-atuais', async (req, res) => {
 router.get('/alertas', async (req, res) => {
   try {
     const resultado = await pool.query(
-      `SELECT a.mensagem, a.status, a.data_hora, m.tipo, p.nome AS ponto_nome
+      `SELECT a.mensagem, a.status, a.nivel, a.data_hora, m.tipo, p.nome AS ponto_nome
        FROM alertas a
        JOIN medicoes m ON m.id = a.medicao_id
        JOIN pontos_monitoramento p ON p.id = m.ponto_id
