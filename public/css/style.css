@@ -615,3 +615,45 @@ td.num {
   th, td { color: #000; border-color: #bbb; }
   a { color: #000; text-decoration: none; }
 }
+
+
+/* ---- Correcoes do teste com usuarios (E1-E6) ---- */
+
+/* E1: no celular as tabelas viram cartoes empilhados (cada td mostra seu rotulo) */
+@media (max-width: 640px) {
+  table.empilhavel thead { display: none; }
+  table.empilhavel, table.empilhavel tbody, table.empilhavel tr, table.empilhavel td { display: block; width: 100%; }
+  table.empilhavel tr { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; padding: 6px 0; background: var(--panel-alt); }
+  table.empilhavel td { border: 0; padding: 4px 12px; white-space: normal; text-align: left !important; }
+  table.empilhavel td[data-rotulo]::before { content: attr(data-rotulo); display: block; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+  table.empilhavel td.vazio, table.empilhavel td.erro, table.empilhavel td.carregando { text-align: center !important; }
+  .cabecalho-publico { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .conteudo-publico { padding: 14px; }
+  .grade-cartoes { grid-template-columns: 1fr; }
+  .grade-resumo { grid-template-columns: 1fr 1fr; }
+  h1 { font-size: 20px; }
+}
+
+/* E3: indicador de carregamento */
+.carregando { color: var(--text-muted); text-align: center; padding: 14px; font-style: italic; }
+.carregando::before { content: ''; display: inline-block; width: 12px; height: 12px; margin-right: 8px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; vertical-align: -2px; animation: girar .8s linear infinite; }
+@keyframes girar { to { transform: rotate(360deg); } }
+
+/* E5: graficos em SVG */
+.grafico { width: 100%; height: auto; display: block; margin: 8px 0 4px; }
+.grafico text { font-family: inherit; }
+.grafico .eixo { stroke: var(--border); stroke-width: 1; }
+.grafico .limite { stroke: var(--danger); stroke-width: 1; stroke-dasharray: 4 3; }
+.grafico .serie { fill: none; stroke: var(--accent); stroke-width: 2; }
+.grafico .pontoN { fill: var(--accent); }
+.grafico .pontoA { fill: var(--danger); }
+.grafico .barra-med { fill: var(--accent); opacity: .85; }
+.grafico .barra-al { fill: var(--danger); opacity: .85; }
+.grafico .rotulo { fill: var(--text-muted); font-size: 11px; }
+.legenda-grafico { font-size: 12px; color: var(--text-muted); margin: 0 0 8px; }
+.legenda-grafico i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin: 0 4px 0 10px; vertical-align: -1px; }
+
+/* E6: mostrar senha */
+.campo-senha { position: relative; }
+.campo-senha input { padding-right: 70px; }
+.campo-senha button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); padding: 2px 8px; font-size: 12px; margin: 0; }

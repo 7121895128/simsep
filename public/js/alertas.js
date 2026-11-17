@@ -2,10 +2,11 @@ async function carregarAlertas() {
   const status = document.getElementById('filtroStatus').value;
   const url = status ? `/api/alertas?status=${status}` : '/api/alertas';
 
+  const corpo = document.getElementById('corpoTabela');
+  corpo.innerHTML = '<tr><td colspan="6" class="carregando">Carregando…</td></tr>';
+
   const resposta = await apiFetch(url);
   if (!resposta) return;
-
-  const corpo = document.getElementById('corpoTabela');
 
   if (!resposta.ok) {
     corpo.innerHTML = '<tr><td colspan="6" class="erro">Não foi possível carregar os alertas.</td></tr>';
@@ -36,6 +37,8 @@ async function carregarAlertas() {
 }
 
 async function resolverAlerta(id) {
+  // E2 (teste com usuarios): resolver e irreversivel, entao pede confirmacao
+  if (!confirm('Marcar este alerta como resolvido? Essa ação não pode ser desfeita.')) return;
   const resposta = await apiFetch('/api/alertas/' + id + '/resolver', { method: 'PUT' });
   if (resposta && !resposta.ok) {
     alert(resposta.dados?.erro || 'Não foi possível resolver o alerta.');

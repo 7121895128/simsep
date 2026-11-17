@@ -1,4 +1,5 @@
 async function carregarPontosSelect() {
+  mostrarCarregando('corpoTabela', 5);
   const resposta = await apiFetch('/api/pontos');
   if (!resposta || !resposta.ok) return;
 

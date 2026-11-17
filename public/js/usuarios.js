@@ -1,6 +1,7 @@
 protegerPaginaAdmin();
 
 async function carregarUsuarios() {
+  mostrarCarregando('corpoTabela', 5);
   const resposta = await apiFetch('/api/usuarios');
   if (!resposta) return;
 

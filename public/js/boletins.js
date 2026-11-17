@@ -19,10 +19,12 @@ async function carregarPrevia() {
     return;
   }
 
+  document.getElementById('previa').innerHTML = '<p class="carregando">Montando a prévia do boletim…</p>';
   const resposta = await apiFetch(`/api/boletins/previa?inicio=${inicio}&fim=${fim}`);
   if (!resposta) return;
 
   if (!resposta.ok) {
+    document.getElementById('previa').innerHTML = '';
     msgErro.textContent = resposta.dados?.erro || 'Não foi possível montar a prévia.';
     return;
   }
@@ -33,6 +35,7 @@ async function carregarPrevia() {
 }
 
 async function carregarBoletins() {
+  mostrarCarregando('corpoTabela', 6);
   const resposta = await apiFetch('/api/boletins');
   if (!resposta) return;
 

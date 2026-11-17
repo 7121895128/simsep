@@ -40,7 +40,7 @@
           </div>
           <div class="campo">
             <label>Valor</label>
-            <input type="number" step="0.01" min="0" id="valor" required>
+            <input type="text" inputmode="decimal" id="valor" placeholder="ex.: 7,4" required autocomplete="off">
           </div>
           <div class="campo">
             <label>Unidade <span class="aviso">(preenchida pelo tipo)</span></label>
@@ -82,6 +82,7 @@
         <p class="erro" id="msgFiltro"></p>
 
         <div class="grade-resumo" id="gradeEstatisticas" style="margin-top:14px;"></div>
+        <div id="graficoHistorico"></div>
 
         <div class="tabela-scroll">
           <table>
@@ -96,6 +97,7 @@
     </div>
   </div>
   <script src="js/menu.js"></script>
+  <script src="js/graficos.js"></script>
   <script src="js/medicoes.js"></script>
 </body>
 </html>

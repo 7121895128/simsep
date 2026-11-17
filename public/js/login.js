@@ -43,3 +43,12 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
     document.getElementById('msgErro').textContent = 'Sua sessão expirou. Entre novamente para continuar.';
   }
 })();
+
+// E6 (teste com usuarios): botao mostrar/ocultar senha
+document.getElementById('botaoMostrarSenha').addEventListener('click', function () {
+  const campo = document.getElementById('senha');
+  const visivel = campo.type === 'text';
+  campo.type = visivel ? 'password' : 'text';
+  this.textContent = visivel ? 'mostrar' : 'ocultar';
+  this.setAttribute('aria-label', visivel ? 'Mostrar senha' : 'Ocultar senha');
+});

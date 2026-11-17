@@ -13,6 +13,7 @@ const ROTULOS_TIPO = {
 
 async function carregarMedicoesAtuais() {
   const grade = document.getElementById('grade-medicoes');
+  grade.innerHTML = '<p class="carregando">Carregando leituras…</p>';
 
   try {
     const resposta = await fetch('/api/publico/medicoes-atuais');
@@ -46,6 +47,7 @@ async function carregarMedicoesAtuais() {
 
 async function carregarDetonacoes() {
   const corpo = document.getElementById('corpoDetonacoes');
+  corpo.innerHTML = '<tr><td colspan="4" class="carregando">Carregando…</td></tr>';
 
   try {
     const resposta = await fetch('/api/publico/detonacoes');
@@ -60,10 +62,10 @@ async function carregarDetonacoes() {
 
     corpo.innerHTML = dados.map((d) => `
       <tr>
-        <td>${esc(d.identificador)}</td>
-        <td class="dado">${new Date(d.data_hora).toLocaleString('pt-BR')}</td>
-        <td>${esc(d.ponto_nome)} — ${esc(d.localizacao)}</td>
-        <td>${esc(d.descricao) || '—'}</td>
+        <td data-rotulo="Identificador">${esc(d.identificador)}</td>
+        <td data-rotulo="Data/Hora" class="dado">${new Date(d.data_hora).toLocaleString('pt-BR')}</td>
+        <td data-rotulo="Local">${esc(d.ponto_nome)} — ${esc(d.localizacao)}</td>
+        <td data-rotulo="Descrição">${esc(d.descricao) || '—'}</td>
       </tr>
     `).join('');
   } catch (err) {
@@ -73,6 +75,7 @@ async function carregarDetonacoes() {
 
 async function carregarAlertas() {
   const corpo = document.getElementById('corpoAlertas');
+  corpo.innerHTML = '<tr><td colspan="5" class="carregando">Carregando…</td></tr>';
 
   try {
     const resposta = await fetch('/api/publico/alertas');
@@ -87,11 +90,11 @@ async function carregarAlertas() {
 
     corpo.innerHTML = dados.map((a) => `
       <tr>
-        <td>${esc(a.ponto_nome)}</td>
-        <td>${ROTULOS_TIPO[a.tipo] || a.tipo}</td>
-        <td>${esc(a.mensagem)}</td>
-        <td><span class="status ${a.status}"><span class="ponto"></span>${a.status}</span></td>
-        <td class="dado">${new Date(a.data_hora).toLocaleString('pt-BR')}</td>
+        <td data-rotulo="Ponto">${esc(a.ponto_nome)}</td>
+        <td data-rotulo="Tipo">${ROTULOS_TIPO[a.tipo] || a.tipo}</td>
+        <td data-rotulo="Mensagem">${esc(a.mensagem)}</td>
+        <td data-rotulo="Situação"><span class="status ${a.status}"><span class="ponto"></span>${a.status}</span></td>
+        <td data-rotulo="Data/Hora" class="dado">${new Date(a.data_hora).toLocaleString('pt-BR')}</td>
       </tr>
     `).join('');
   } catch (err) {
@@ -102,6 +105,7 @@ async function carregarAlertas() {
 // US07 - boletins periodicos emitidos pela pedreira
 async function carregarBoletins() {
   const corpo = document.getElementById('corpoBoletins');
+  corpo.innerHTML = '<tr><td colspan="4" class="carregando">Carregando…</td></tr>';
 
   try {
     const resposta = await fetch('/api/publico/boletins');
@@ -116,10 +120,10 @@ async function carregarBoletins() {
 
     corpo.innerHTML = dados.map((b) => `
       <tr>
-        <td><a href="boletim.html?id=${Number(b.id)}">${esc(b.titulo)}</a></td>
-        <td class="dado">${new Date(b.periodo_inicio).toLocaleDateString('pt-BR')} a ${new Date(b.periodo_fim).toLocaleDateString('pt-BR')}</td>
-        <td>${esc(b.resumo)}</td>
-        <td class="dado">${new Date(b.emitido_em).toLocaleDateString('pt-BR')}</td>
+        <td data-rotulo="Boletim"><a href="boletim.html?id=${Number(b.id)}">${esc(b.titulo)}</a> <span class="aviso">(abrir)</span></td>
+        <td data-rotulo="Período" class="dado">${new Date(b.periodo_inicio).toLocaleDateString('pt-BR')} a ${new Date(b.periodo_fim).toLocaleDateString('pt-BR')}</td>
+        <td data-rotulo="Resumo">${esc(b.resumo)}</td>
+        <td data-rotulo="Publicado em" class="dado">${new Date(b.emitido_em).toLocaleDateString('pt-BR')}</td>
       </tr>
     `).join('');
   } catch (err) {

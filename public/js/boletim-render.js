@@ -35,8 +35,8 @@ function renderizarBoletim(b) {
 
   const detonacoes = (b.detonacoes || []).length === 0
     ? '<p class="vazio">Nenhuma detonação no período.</p>'
-    : `<table><thead><tr><th>Identificador</th><th>Data/Hora</th><th>Local</th></tr></thead><tbody>
-        ${b.detonacoes.map((d) => `<tr><td>${escB(d.identificador)}</td><td class="dado">${new Date(d.data_hora).toLocaleString('pt-BR')}</td><td>${escB(d.ponto_nome)} — ${escB(d.localizacao)}</td></tr>`).join('')}
+    : `<table class="empilhavel"><thead><tr><th>Identificador</th><th>Data/Hora</th><th>Local</th></tr></thead><tbody>
+        ${b.detonacoes.map((d) => `<tr><td data-rotulo="Identificador">${escB(d.identificador)}</td><td data-rotulo="Data/Hora" class="dado">${new Date(d.data_hora).toLocaleString('pt-BR')}</td><td data-rotulo="Local">${escB(d.ponto_nome)} — ${escB(d.localizacao)}</td></tr>`).join('')}
        </tbody></table>`;
 
   return `

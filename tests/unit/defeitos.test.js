@@ -46,6 +46,11 @@ describe('DEF-03 validarMedicao - valores nao numericos aceitos por coercao', ()
   test('aceita numero em texto com ponto decimal', () => {
     assert.equal(validarMedicao({ ponto_id: 1, tipo: 'ar', valor: '12.5' }).valido, true);
   });
+  test('E4 (teste com usuarios): aceita virgula como separador decimal', () => {
+    const r = validarMedicao({ ponto_id: 1, tipo: 'vibracao', valor: '7,4' });
+    assert.equal(r.valido, true);
+    assert.equal(r.dados.valor, 7.4);
+  });
 });
 
 describe('DEF-04 validarUsuario - normalizacao do e-mail', () => {

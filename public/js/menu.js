@@ -18,6 +18,12 @@ function esc(valor) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+// E3 (teste com usuarios): indicador de carregamento padrao para tabelas
+function mostrarCarregando(idTbody, colunas) {
+  const corpo = document.getElementById(idTbody);
+  if (corpo) corpo.innerHTML = `<tr><td colspan="${colunas}" class="carregando">Carregando…</td></tr>`;
+}
+
 function formatarDataHora(valor) {
   return valor ? new Date(valor).toLocaleString('pt-BR') : '—';
 }

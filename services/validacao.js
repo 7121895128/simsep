@@ -20,7 +20,8 @@ function validarMedicao({ ponto_id, tipo, valor, unidade }) {
 
   // DEF-03: Number(true) === 1 e Number('Infinity') passavam na validacao antiga.
   // Aceita apenas numero ou texto numerico finito, dentro de NUMERIC(10,2).
-  const textoValor = typeof valor === 'number' ? String(valor) : (typeof valor === 'string' ? valor.trim() : '');
+  // E4: aceita virgula decimal ("7,4") alem de ponto
+  const textoValor = typeof valor === 'number' ? String(valor) : (typeof valor === 'string' ? valor.trim().replace(',', '.') : '');
   const numero = /^-?\d+(\.\d+)?$/.test(textoValor) ? Number(textoValor) : NaN;
   if (Number.isNaN(numero) || !Number.isFinite(numero)) {
     erros.push('Valor deve ser numerico');

@@ -17,6 +17,7 @@ async function gerarRelatorio() {
   if (inicio) params.set('inicio', inicio);
   if (fim) params.set('fim', fim);
 
+  document.getElementById('gradeTotais').innerHTML = '<p class="carregando">Gerando relatório…</p>';
   const resposta = await apiFetch('/api/relatorios/gerencial?' + params.toString());
   if (!resposta) return;
 
@@ -66,6 +67,16 @@ async function gerarRelatorio() {
         <td class="num dado">${esc(p.alertas_abertos)}</td>
         <td style="width:30%">${barra(p.alertas, maxAlertasPonto)}</td>
       </tr>`).join('');
+
+  // E5 (teste com usuarios): graficos de barras
+  document.getElementById('graficoSemanal').innerHTML = graficoBarras(
+    r.por_semana.map((s) => ({ rotulo: 'sem. ' + s.semana, a: Number(s.medicoes), b: Number(s.alertas) })),
+    { titulo: 'Medições e alertas por semana', rotuloA: 'medições', rotuloB: 'alertas' }
+  );
+  document.getElementById('graficoPontos').innerHTML = graficoBarras(
+    r.por_ponto.filter((p) => Number(p.medicoes) > 0).map((p) => ({ rotulo: p.ponto_nome.length > 14 ? p.ponto_nome.slice(0, 13) + '…' : p.ponto_nome, a: Number(p.medicoes), b: Number(p.alertas) })),
+    { titulo: 'Medições e alertas por ponto', rotuloA: 'medições', rotuloB: 'alertas' }
+  );
 
   const maxSemana = Math.max(0, ...r.por_semana.map((s) => Number(s.medicoes)));
   document.getElementById('corpoSemana').innerHTML = r.por_semana.length === 0

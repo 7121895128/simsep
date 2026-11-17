@@ -69,6 +69,7 @@ async function carregarEstatisticas() {
 
 async function carregarMedicoes() {
   document.getElementById('msgFiltro').textContent = '';
+  mostrarCarregando('corpoTabela', 8);
   const resposta = await apiFetch('/api/medicoes' + parametrosFiltro());
   if (!resposta) return;
 
@@ -85,6 +86,7 @@ async function carregarMedicoes() {
     corpo.innerHTML = '<tr><td colspan="8" class="vazio">Nenhuma medição encontrada para os filtros selecionados.</td></tr>';
     rodape.textContent = '';
     document.getElementById('gradeEstatisticas').innerHTML = '';
+    document.getElementById('graficoHistorico').innerHTML = '';
     return;
   }
 
@@ -101,8 +103,46 @@ async function carregarMedicoes() {
     </tr>
   `).join('');
 
+  desenharGraficoHistorico(resposta.dados);
   rodape.textContent = `${resposta.dados.length} medição(ões) listada(s)` + (resposta.dados.length === 1000 ? ' (limite de 1000 — refine o período)' : '');
   carregarEstatisticas();
+}
+
+// E5 (teste com usuarios): grafico de linha do historico.
+// Mostra um tipo por vez: o tipo filtrado ou, sem filtro, o tipo com mais leituras.
+function desenharGraficoHistorico(medicoes) {
+  const alvo = document.getElementById('graficoHistorico');
+  const tipoFiltro = document.getElementById('filtroTipo').value;
+  const pontoFiltro = document.getElementById('filtroPonto').value;
+
+  let tipo = tipoFiltro;
+  if (!tipo) {
+    const contagem = {};
+    medicoes.forEach((m) => { contagem[m.tipo] = (contagem[m.tipo] || 0) + 1; });
+    tipo = Object.keys(contagem).sort((a, b) => contagem[b] - contagem[a])[0];
+  }
+
+  const serie = medicoes
+    .filter((m) => m.tipo === tipo)
+    .map((m) => ({
+      x: new Date(m.data_hora),
+      y: Number(m.valor),
+      acima: m.situacao === 'acima_limite',
+      eixo: new Date(m.data_hora).toLocaleDateString('pt-BR'),
+      rotulo: new Date(m.data_hora).toLocaleString('pt-BR') + (pontoFiltro ? '' : ' · ' + m.ponto_nome)
+    }))
+    .sort((a, b) => a.x - b.x);
+
+  if (serie.length < 2) {
+    alvo.innerHTML = '';
+    return;
+  }
+
+  const limite = medicoes.find((m) => m.tipo === tipo && m.valor_limite !== null);
+  const unidade = (medicoes.find((m) => m.tipo === tipo) || {}).unidade || '';
+  alvo.innerHTML = graficoLinha(serie, limite ? Number(limite.valor_limite) : null, {
+    titulo: `${ROTULO_TIPO[tipo] || tipo} (${unidade})${pontoFiltro ? '' : ' — todos os pontos'}`
+  });
 }
 
 async function exportarCsv() {
@@ -151,7 +191,8 @@ document.getElementById('formMedicao').addEventListener('submit', async (e) => {
   const ponto_id = document.getElementById('pontoId').value;
   const detonacao_id = document.getElementById('detonacaoId').value || null;
   const tipo = document.getElementById('tipo').value;
-  const valor = document.getElementById('valor').value;
+  // E4 (teste com usuarios): aceita virgula como separador decimal
+  const valor = document.getElementById('valor').value.trim().replace(',', '.');
   const unidade = document.getElementById('unidade').value;
   const msgErro = document.getElementById('msgErro');
   msgErro.textContent = '';

@@ -7,6 +7,7 @@ function editarPontoPorId(id) {
 }
 
 async function carregarPontos() {
+  mostrarCarregando('corpoTabela', 4);
   const resposta = await apiFetch('/api/pontos');
   if (!resposta) return;
 
