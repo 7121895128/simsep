@@ -52,13 +52,20 @@ router.get('/', async (req, res) => {
     const filtros = montarFiltros(req.query);
     if (filtros.erro) return res.status(400).json({ erro: filtros.erro });
 
-    const resultado = await pool.query(
-      SQL_LISTAGEM + filtros.where + ' ORDER BY m.data_hora DESC LIMIT 1000',
-      filtros.params
-    );
+    // US20: paginacao (pagina 1..N, 50 por pagina por padrao, maximo 200)
+    const porPagina = Math.min(200, Math.max(1, Number(req.query.por_pagina) || 50));
+    const pagina = Math.max(1, Number(req.query.pagina) || 1);
+    const params = filtros.params.concat([porPagina, (pagina - 1) * porPagina]);
+    const [resultado, total] = await Promise.all([
+      pool.query(SQL_LISTAGEM + filtros.where + ` ORDER BY m.data_hora DESC LIMIT $${params.length - 1} OFFSET $${params.length}`, params),
+      pool.query('SELECT COUNT(*) FROM medicoes m' + filtros.where, filtros.params)
+    ]);
+    res.setHeader('X-Total', total.rows[0].count);
+    res.setHeader('X-Pagina', pagina);
+    res.setHeader('X-Por-Pagina', porPagina);
     res.json(resultado.rows);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao listar medicoes' });
+    res.status(500).json({ erro: 'Erro ao listar medicoes', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -86,7 +93,7 @@ router.get('/estatisticas', async (req, res) => {
     );
     res.json(resultado.rows);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao calcular estatisticas' });
+    res.status(500).json({ erro: 'Erro ao calcular estatisticas', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -118,7 +125,7 @@ router.get('/exportar', async (req, res) => {
     res.setHeader('Content-Disposition', `attachment; filename="${nome}"`);
     res.send(csv);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao exportar medicoes' });
+    res.status(500).json({ erro: 'Erro ao exportar medicoes', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -177,7 +184,7 @@ router.post('/', autorizar('operador', 'admin'), async (req, res) => {
     if (err.code === '23514') {
       return res.status(400).json({ erro: 'Valor fora das regras do banco' });
     }
-    res.status(500).json({ erro: 'Erro ao registrar medicao' });
+    res.status(500).json({ erro: 'Erro ao registrar medicao', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   } finally {
     cliente.release();
   }

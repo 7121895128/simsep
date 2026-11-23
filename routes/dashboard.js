@@ -34,7 +34,7 @@ router.get('/resumo', async (req, res) => {
       ultimosAlertas: ultimosAlertas.rows.map((a) => ({ ...a, atrasado: alertaAtrasado(a.status, a.data_hora) }))
     });
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao carregar o resumo' });
+    res.status(500).json({ erro: 'Erro ao carregar o resumo', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 

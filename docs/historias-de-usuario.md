@@ -18,7 +18,10 @@
 | US13 | Como Operador, quero notificação por e-mail de alerta | — | Pendente |
 | US14 | Como Administrador, quero gráficos no relatório e no histórico (E5) | gráfico de linha no histórico com linha do limite; barras por semana e por ponto no relatório; SVG sem biblioteca | Concluída (1.3.0) |
 | US15 | Como Morador, quero painel público adaptado ao celular (E1) | tabelas viram cartões empilhados abaixo de 640px; cabeçalho e grades em coluna única; boletim idem | Concluída (1.3.0) |
-| US16 | Como usuário, quero recuperar senha por e-mail | botão "mostrar senha" entregue (E6); recuperação pendente | Parcial |
+| US16 | Como usuário, quero recuperar minha senha | admin gera senha temporária (Usuários → Redefinir senha); usuário é obrigado a trocar no próximo login; qualquer usuário troca a própria senha | Concluída (1.5.0) |
 | US17 | Como usuário, quero ver um indicador de "carregando" enquanto as consultas rodam (E3 do teste com usuários) | spinner em todas as tabelas, prévia do boletim e relatório | Concluída (1.3.0) |
 | US19 | Como Operador, quero confirmar antes de resolver um alerta, pois não há como desfazer (E2) | diálogo de confirmação | Concluída (1.3.0) |
 | US21 | Como Operador, quero digitar o valor da medição com vírgula (E4) | "7,4" aceito na tela e na API | Concluída (1.3.0) |
+
+| US18 | Como usuário, quero mensagens de erro com orientação | erros 500 trazem "o que fazer" | Concluída (1.5.0) |
+| US20 | Como Engenheiro, quero paginação do histórico | 50 por página, X-Total, anterior/próxima | Concluída (1.5.0) |

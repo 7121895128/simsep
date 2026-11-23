@@ -25,9 +25,21 @@ async function carregarUsuarios() {
       <td>${esc(u.email)}</td>
       <td>${esc(u.perfil)}</td>
       <td class="dado">${new Date(u.criado_em).toLocaleDateString('pt-BR')}</td>
-      <td>${u.id === meuId ? '' : `<button class="perigo" onclick="excluirUsuario(${u.id})">Excluir</button>`}</td>
+      <td>${u.id === meuId ? '' : `<button class="secundario" onclick="redefinirSenha(${u.id})">Redefinir senha</button> <button class="perigo" onclick="excluirUsuario(${u.id})">Excluir</button>`}</td>
     </tr>
   `).join('');
+}
+
+// US16: admin gera senha temporaria; usuario e obrigado a trocar no proximo login
+async function redefinirSenha(id) {
+  if (!confirm('Gerar uma senha temporária para este usuário? A senha atual deixará de valer.')) return;
+  const resposta = await apiFetch('/api/usuarios/' + id + '/redefinir-senha', { method: 'POST' });
+  if (!resposta) return;
+  if (!resposta.ok) {
+    alert(resposta.dados?.erro || 'Não foi possível redefinir a senha.');
+    return;
+  }
+  prompt(`Senha temporária de ${resposta.dados.nome} (entregue pessoalmente; será trocada no primeiro acesso):`, resposta.dados.senha_temporaria);
 }
 
 async function excluirUsuario(id) {

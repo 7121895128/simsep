@@ -34,8 +34,12 @@ async function carregarSelects() {
   }
 }
 
-function parametrosFiltro() {
+let paginaAtual = 1;
+const POR_PAGINA = 50;
+
+function parametrosFiltro(comPagina) {
   const params = new URLSearchParams();
+  if (comPagina) { params.set('pagina', paginaAtual); params.set('por_pagina', POR_PAGINA); }
   const inicio = document.getElementById('filtroInicio').value;
   const fim = document.getElementById('filtroFim').value;
   const ponto = document.getElementById('filtroPonto').value;
@@ -70,7 +74,7 @@ async function carregarEstatisticas() {
 async function carregarMedicoes() {
   document.getElementById('msgFiltro').textContent = '';
   mostrarCarregando('corpoTabela', 8);
-  const resposta = await apiFetch('/api/medicoes' + parametrosFiltro());
+  const resposta = await apiFetch('/api/medicoes' + parametrosFiltro(true));
   if (!resposta) return;
 
   const corpo = document.getElementById('corpoTabela');
@@ -104,7 +108,12 @@ async function carregarMedicoes() {
   `).join('');
 
   desenharGraficoHistorico(resposta.dados);
-  rodape.textContent = `${resposta.dados.length} medição(ões) listada(s)` + (resposta.dados.length === 1000 ? ' (limite de 1000 — refine o período)' : '');
+  // US20: paginacao
+  const total = resposta.total || resposta.dados.length;
+  const paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+  rodape.innerHTML = `${total} medição(ões) · página ${paginaAtual} de ${paginas} ` +
+    `<button class="secundario" ${paginaAtual <= 1 ? 'disabled' : ''} onclick="mudarPagina(-1)">‹ anterior</button> ` +
+    `<button class="secundario" ${paginaAtual >= paginas ? 'disabled' : ''} onclick="mudarPagina(1)">próxima ›</button>`;
   carregarEstatisticas();
 }
 
@@ -173,13 +182,20 @@ document.getElementById('tipo').addEventListener('change', (e) => {
   document.getElementById('unidade').value = UNIDADE_POR_TIPO[e.target.value] || '';
 });
 
+function mudarPagina(delta) {
+  paginaAtual = Math.max(1, paginaAtual + delta);
+  carregarMedicoes();
+}
+
 document.getElementById('formFiltro').addEventListener('submit', (e) => {
   e.preventDefault();
+  paginaAtual = 1;
   carregarMedicoes();
 });
 
 document.getElementById('botaoLimparFiltro').addEventListener('click', () => {
   ['filtroInicio', 'filtroFim', 'filtroPonto', 'filtroTipo'].forEach((id) => { document.getElementById(id).value = ''; });
+  paginaAtual = 1;
   carregarMedicoes();
 });
 

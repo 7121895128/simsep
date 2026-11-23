@@ -109,7 +109,7 @@ router.get('/gerencial', async (req, res) => {
       detonacoes: detonacoes.rows
     });
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao gerar relatorio gerencial' });
+    res.status(500).json({ erro: 'Erro ao gerar relatorio gerencial', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 

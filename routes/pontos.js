@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
     const resultado = await pool.query('SELECT * FROM pontos_monitoramento ORDER BY nome');
     res.json(resultado.rows);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao listar pontos' });
+    res.status(500).json({ erro: 'Erro ao listar pontos', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -32,7 +32,7 @@ router.post('/', autorizar('operador', 'admin'), async (req, res) => {
     if (err.code === '23505') {
       return res.status(409).json({ erro: 'Ja existe um ponto com esse nome' });
     }
-    res.status(500).json({ erro: 'Erro ao cadastrar ponto' });
+    res.status(500).json({ erro: 'Erro ao cadastrar ponto', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -58,7 +58,7 @@ router.put('/:id', autorizar('operador', 'admin'), async (req, res) => {
     if (err.code === '23505') {
       return res.status(409).json({ erro: 'Ja existe um ponto com esse nome' });
     }
-    res.status(500).json({ erro: 'Erro ao atualizar ponto' });
+    res.status(500).json({ erro: 'Erro ao atualizar ponto', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -75,7 +75,7 @@ router.delete('/:id', autorizar('operador', 'admin'), async (req, res) => {
     if (err.code === '23503') {
       return res.status(409).json({ erro: 'Ponto possui medicoes ou detonacoes vinculadas e nao pode ser excluido' });
     }
-    res.status(500).json({ erro: 'Erro ao excluir ponto' });
+    res.status(500).json({ erro: 'Erro ao excluir ponto', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 

@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
     );
     res.json(resultado.rows);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao listar limites' });
+    res.status(500).json({ erro: 'Erro ao listar limites', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -32,7 +32,7 @@ router.get('/historico', autorizar('admin'), async (req, res) => {
     );
     res.json(resultado.rows);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao listar historico de limites' });
+    res.status(500).json({ erro: 'Erro ao listar historico de limites', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -74,7 +74,7 @@ router.put('/:tipo', autorizar('admin'), async (req, res) => {
   } catch (err) {
     await cliente.query('ROLLBACK');
     if (err.code === '23514') return res.status(400).json({ erro: 'Limite deve ser maior que zero' });
-    res.status(500).json({ erro: 'Erro ao atualizar limite' });
+    res.status(500).json({ erro: 'Erro ao atualizar limite', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   } finally {
     cliente.release();
   }

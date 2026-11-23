@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
     );
     res.json(resultado.rows);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao listar detonacoes' });
+    res.status(500).json({ erro: 'Erro ao listar detonacoes', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -48,7 +48,7 @@ router.post('/', autorizar('operador', 'admin'), async (req, res) => {
     if (err.code === '23503') {
       return res.status(400).json({ erro: 'Ponto de monitoramento nao existe' });
     }
-    res.status(500).json({ erro: 'Erro ao cadastrar detonacao' });
+    res.status(500).json({ erro: 'Erro ao cadastrar detonacao', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 

@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
     );
     res.json(resultado.rows);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao listar usuarios' });
+    res.status(500).json({ erro: 'Erro ao listar usuarios', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -40,7 +40,25 @@ router.post('/', async (req, res) => {
     if (err.code === '23505') {
       return res.status(409).json({ erro: 'E-mail ja cadastrado' });
     }
-    res.status(500).json({ erro: 'Erro ao cadastrar usuario' });
+    res.status(500).json({ erro: 'Erro ao cadastrar usuario', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
+  }
+});
+
+// US16: admin redefine a senha de um usuario; gera senha temporaria e exige troca no proximo login
+router.post('/:id/redefinir-senha', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (Number.isNaN(id)) return res.status(400).json({ erro: 'Id invalido' });
+    const senhaTemporaria = 'simsep-' + Math.random().toString(36).slice(2, 8);
+    const hash = await bcrypt.hash(senhaTemporaria, 10);
+    const r = await pool.query(
+      'UPDATE usuarios SET senha_hash = $2, trocar_senha = TRUE WHERE id = $1 RETURNING id, nome, email',
+      [id, hash]
+    );
+    if (r.rows.length === 0) return res.status(404).json({ erro: 'Usuario nao encontrado' });
+    res.json({ ...r.rows[0], senha_temporaria: senhaTemporaria });
+  } catch (err) {
+    res.status(500).json({ erro: 'Erro ao redefinir senha', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -68,7 +86,7 @@ router.delete('/:id', async (req, res) => {
     await pool.query('DELETE FROM usuarios WHERE id = $1', [idAlvo]);
     res.status(204).send();
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao excluir usuario' });
+    res.status(500).json({ erro: 'Erro ao excluir usuario', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 

@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
     // RN18: marca alertas abertos ha mais de 48h
     res.json(resultado.rows.map((a) => ({ ...a, atrasado: alertaAtrasado(a.status, a.data_hora) })));
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao listar alertas' });
+    res.status(500).json({ erro: 'Erro ao listar alertas', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -55,7 +55,7 @@ router.put('/:id/resolver', autorizar('operador', 'admin'), async (req, res) => 
     );
     res.json(resultado.rows[0]);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao resolver alerta' });
+    res.status(500).json({ erro: 'Erro ao resolver alerta', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 

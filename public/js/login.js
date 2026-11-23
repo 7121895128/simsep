@@ -27,7 +27,7 @@ document.getElementById('formLogin').addEventListener('submit', async (e) => {
     localStorage.setItem('nome', dados.nome);
     localStorage.setItem('perfil', dados.perfil);
 
-    window.location.href = 'dashboard.html';
+    window.location.href = resposta.dados.trocar_senha ? 'trocar-senha.html' : 'dashboard.html';
   } catch (err) {
     msgErro.textContent = 'Não foi possível conectar ao servidor';
   } finally {

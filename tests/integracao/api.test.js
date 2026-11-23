@@ -294,6 +294,34 @@ describe('Alertas, relatorios e boletins', () => {
     assert.ok(r.dados.every((a) => typeof a.atrasado === 'boolean'));
   });
 
+  test('US20: historico pagina com X-Total e por_pagina', async () => {
+    const r = await chamar('GET', `/api/medicoes?ponto_id=${pontoId}&pagina=1&por_pagina=2`, null, tokenAdmin);
+    assert.equal(r.status, 200);
+    assert.ok(r.dados.length <= 2);
+    assert.ok(Number(r.headers.get('x-total')) >= 2);
+  });
+
+  test('US16: admin redefine senha; usuario entra com a temporaria, e obrigado a trocar e troca', async () => {
+    const lista = await chamar('GET', '/api/usuarios', null, tokenAdmin);
+    const eng = lista.dados.find((u) => u.email.startsWith('eng.'));
+    const red = await chamar('POST', `/api/usuarios/${eng.id}/redefinir-senha`, null, tokenAdmin);
+    assert.equal(red.status, 200);
+    assert.ok(red.dados.senha_temporaria);
+
+    const login = await chamar('POST', '/api/auth/login', { email: eng.email, senha: red.dados.senha_temporaria });
+    assert.equal(login.status, 200);
+    assert.equal(login.dados.trocar_senha, true);
+
+    const errada = await chamar('PUT', '/api/auth/senha', { senha_atual: 'xxx', senha_nova: 'novaSenha1' }, login.dados.token);
+    assert.equal(errada.status, 401);
+    const ok = await chamar('PUT', '/api/auth/senha', { senha_atual: red.dados.senha_temporaria, senha_nova: 'novaSenha1' }, login.dados.token);
+    assert.equal(ok.status, 200);
+    const login2 = await chamar('POST', '/api/auth/login', { email: eng.email, senha: 'novaSenha1' });
+    assert.equal(login2.status, 200);
+    assert.equal(login2.dados.trocar_senha, false);
+    tokenEngenheiro = login2.dados.token;
+  });
+
   test('painel publico nao exige token e nao expoe dados de usuarios', async () => {
     const r = await chamar('GET', '/api/publico/medicoes-atuais');
     assert.equal(r.status, 200);

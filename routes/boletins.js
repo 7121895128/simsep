@@ -61,7 +61,7 @@ router.get('/previa', async (req, res) => {
   try {
     res.json(await consultarDadosBoletim(periodo.periodo));
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao montar previa do boletim' });
+    res.status(500).json({ erro: 'Erro ao montar previa do boletim', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -75,7 +75,7 @@ router.get('/', async (req, res) => {
     );
     res.json(resultado.rows);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao listar boletins' });
+    res.status(500).json({ erro: 'Erro ao listar boletins', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -104,7 +104,7 @@ router.post('/', autorizar('operador', 'admin'), async (req, res) => {
     res.status(201).json(resultado.rows[0]);
   } catch (err) {
     if (err.code === '23505') return res.status(409).json({ erro: 'Ja existe um boletim emitido para este mesmo periodo' });
-    res.status(500).json({ erro: 'Erro ao emitir boletim' });
+    res.status(500).json({ erro: 'Erro ao emitir boletim', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 

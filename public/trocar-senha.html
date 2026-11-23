@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIMSEP - Trocar senha</title>
+<link rel="icon" type="image/svg+xml" href="img/logo.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="tela-login">
+  <div class="caixa-login">
+    <div class="marca">
+      <img src="img/logo.svg" alt="" class="logo-marca">
+      <div><strong>SIMSEP</strong><span>Trocar senha</span></div>
+    </div>
+    <p class="aviso" id="motivo">Defina uma nova senha para continuar.</p>
+    <form id="formSenha">
+      <div class="campo">
+        <label>Senha atual (ou temporária)</label>
+        <input type="password" id="senhaAtual" required>
+      </div>
+      <div class="campo">
+        <label>Nova senha (mínimo 6 caracteres)</label>
+        <input type="password" id="senhaNova" required minlength="6">
+      </div>
+      <div class="campo">
+        <label>Confirmar nova senha</label>
+        <input type="password" id="senhaConfirma" required>
+      </div>
+      <button type="submit">Salvar nova senha</button>
+      <p class="erro" id="msgErro" role="status" aria-live="polite"></p>
+    </form>
+    <p class="aviso" style="text-align:center;margin-top:10px"><a href="dashboard.html">Voltar ao painel</a></p>
+  </div>
+  </div>
+  <script src="js/menu.js"></script>
+  <script>
+    if (!localStorage.getItem('token')) window.location.href = 'index.html';
+    document.getElementById('formSenha').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('msgErro');
+      msg.style.color = ''; msg.textContent = '';
+      const senha_atual = document.getElementById('senhaAtual').value;
+      const senha_nova = document.getElementById('senhaNova').value;
+      if (senha_nova !== document.getElementById('senhaConfirma').value) { msg.textContent = 'A confirmação não confere.'; return; }
+      const r = await apiFetch('/api/auth/senha', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ senha_atual, senha_nova }) });
+      if (!r) return;
+      if (!r.ok) { msg.textContent = r.dados?.erro || 'Não foi possível trocar a senha.'; return; }
+      msg.style.color = 'var(--success)'; msg.textContent = 'Senha alterada. Redirecionando…';
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
+    });
+  </script>
+</body>
+</html>

@@ -93,7 +93,12 @@ async function apiFetch(url, opcoes = {}) {
     return null;
   }
 
-  return { ok: resposta.ok, status: resposta.status, dados };
+  // US18: erro 500 ganha orientacao ao usuario; mensagem fica no campo erro
+  if (resposta.status >= 500 && dados && dados.orientacao) {
+    dados.erro = `${dados.erro}. ${dados.orientacao}`;
+  }
+
+  return { ok: resposta.ok, status: resposta.status, dados, total: Number(resposta.headers.get('X-Total') || 0) };
 }
 
 function montarBarraLateral() {
@@ -122,7 +127,7 @@ function montarBarraLateral() {
     <nav>${links}</nav>
     <div class="rodape-usuario">
       <div class="nome">${esc(nome)}</div>
-      <div class="perfil">${esc(perfil)}</div>
+      <div class="perfil">${esc(perfil)} · <a href="trocar-senha.html" style="color:inherit">trocar senha</a></div>
       <button class="secundario" onclick="sair()">Sair</button>
     </div>
   `;

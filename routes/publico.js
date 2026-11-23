@@ -14,7 +14,7 @@ router.get('/detonacoes', async (req, res) => {
     );
     res.json(resultado.rows);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao listar detonações programadas' });
+    res.status(500).json({ erro: 'Erro ao listar detonações programadas', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -33,7 +33,7 @@ router.get('/medicoes-atuais', async (req, res) => {
     );
     res.json(resultado.rows);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao listar medições atuais' });
+    res.status(500).json({ erro: 'Erro ao listar medições atuais', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -49,7 +49,7 @@ router.get('/alertas', async (req, res) => {
     );
     res.json(resultado.rows);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao listar alertas' });
+    res.status(500).json({ erro: 'Erro ao listar alertas', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -62,7 +62,7 @@ router.get('/boletins', async (req, res) => {
     );
     res.json(resultado.rows);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao listar boletins' });
+    res.status(500).json({ erro: 'Erro ao listar boletins', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
@@ -77,7 +77,7 @@ router.get('/boletins/:id', async (req, res) => {
     if (resultado.rows.length === 0) return res.status(404).json({ erro: 'Boletim nao encontrado' });
     res.json(resultado.rows[0]);
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao consultar boletim' });
+    res.status(500).json({ erro: 'Erro ao consultar boletim', orientacao: 'Tente novamente em alguns segundos. Se o problema continuar, avise o administrador informando o horário.' });
   }
 });
 
