@@ -654,6 +654,12 @@ td.num {
 .legenda-grafico i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin: 0 4px 0 10px; vertical-align: -1px; }
 
 /* E6: mostrar senha */
-.campo-senha { position: relative; }
-.campo-senha input { padding-right: 70px; }
-.campo-senha button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); padding: 2px 8px; font-size: 12px; margin: 0; }
+.campo-senha { position: relative; display: flex; align-items: center; }
+.campo-senha input { width: 100%; padding-right: 76px; }
+.campo-senha button {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  background: transparent; border: 0; box-shadow: none; margin: 0; padding: 4px 6px;
+  font-size: 12px; font-weight: 600; letter-spacing: .02em; color: var(--text-muted); cursor: pointer; border-radius: 4px;
+}
+.campo-senha button:hover { color: var(--accent); background: transparent; }
+.campo-senha button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
