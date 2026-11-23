@@ -18,6 +18,8 @@
 | RF10 | Histórico de medições por período, ponto e tipo, com estatísticas e CSV | Média | US09 |
 | RF11 | Relatórios gerenciais por período | Média | US10 |
 | RF12 | Gestão de usuários exclusiva do Administrador; cadastro público só no 1º acesso | Alta | US11 |
+| RF13 | Editar limites de segurança pela interface, com histórico de alterações | Alta | US12 |
+| RF14 | Gráficos no histórico de medições e no relatório gerencial | Média | US14 |
 
 ## Requisitos não funcionais
 | ID | Requisito | Categoria |
@@ -31,6 +33,8 @@
 | RNF07 | Toda resposta da API em JSON, inclusive erros e 404 | API |
 | RNF08 | Regras de negócio cobertas por testes (`npm test`) | Manutenibilidade |
 | RNF09 | Tecnologias livres (Node/Express, PostgreSQL, HTML/CSS/JS) | Portabilidade |
+| RNF10 | Painel público e boletim usáveis no celular (tabelas viram cartões abaixo de 640 px) | Usabilidade |
+| RNF11 | Acessibilidade básica: contraste ≥ 4,5:1, mensagens com aria-live, mostrar senha | Acessibilidade |
 
 ## Regras de negócio
 | ID | Regra |
